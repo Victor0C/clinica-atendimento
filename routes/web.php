@@ -17,6 +17,8 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('pacientes')->group(
         function () {
             Route::get('/', [PacientesController::class, 'getViewPacientes']);
+            Route::post('/', [PacientesController::class, 'createPacientes']);
+            Route::get('/novo', [PacientesController::class, 'getViewCreatePacientes']);
         }
     );
 });

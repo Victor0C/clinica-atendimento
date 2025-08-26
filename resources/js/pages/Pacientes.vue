@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 
 import type {
   ColumnDef,
@@ -23,6 +23,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import SearchInput from '@/components/Inputs/SearchInput.vue';
+import { Plus, Search } from 'lucide-vue-next';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -124,6 +126,22 @@ const table = useVueTable({
 
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="flex h-full flex-1 flex-col gap-4 p-4 overflow-x-auto">
+      <div class="flex flex-col sm:flex-row w-full gap-2">
+        <div class="flex gap-2 w-full">
+
+          <SearchInput id="1" placeholder="Pesquise pelo nome do paciente" />
+          <Button>
+            <Search />
+          </Button>
+        </div>
+        <Link href="/pacientes/novo">
+
+        <Button class="sm:ml-auto">
+          <Plus /> Novo paciente
+        </Button>
+        </Link>
+      </div>
+
       <div class="rounded-md border">
         <Table>
           <TableHeader>
