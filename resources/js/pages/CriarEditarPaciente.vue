@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BarLoading from '@/components/Loading/BarLoading.vue'
 import { Button } from '@/components/ui/button'
 import {
   FormControl,
@@ -8,16 +9,19 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import Progress from '@/components/ui/progress/Progress.vue'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { useToasts } from '@/composables/useToasts'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { createPaciente } from '@/Services/PacienteService'
 import { BreadcrumbItem } from '@/types'
+import { wait } from '@/Utils'
 import { Inertia } from '@inertiajs/inertia'
 import { Head } from '@inertiajs/vue3'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
+import { ref } from 'vue'
 import * as z from 'zod'
 
 
@@ -83,36 +87,34 @@ const form = useForm({
   },
 })
 
-const { showToastPromise, showToastManualSuccess } = useToasts();
+const loading = ref(false);
+const progress = ref(0);
+
+
 const onSubmit = form.handleSubmit((values) => {
-  showToastPromise(
-    createPaciente(values),
-    () => {
-      Inertia.visit('/pacientes', { preserveState: true });
-      return "Paciente cadastrado com sucesso!";
-    },
-    (err) => (err instanceof Error ? err.message : "Erro ao cadastrar paciente")
-  );
-})
+  loading.value = true
+  createPaciente(values)
+    .then(async () => {
+      progress.value = 100
+      await wait(500)
+      Inertia.visit('/pacientes')
+    })
+    .catch(async (err) => {
+      progress.value = 100
 
+      const { error } = useToasts()
 
-const testePromise = new Promise((resolve) => {
-  setTimeout(() => {
-    resolve("ok"); // resolve após 2s
-    // ou reject(new Error("Erro de teste")); para testar erro
-  }, 2000);
+      await wait(500)
+
+      error(err instanceof Error ? err.message : "Erro ao cadastrar paciente")
+
+    }).finally(() => {
+      loading.value = false
+      progress.value = 0
+    });
 });
 
-const teste = () => {
-  showToastManualSuccess(
-    testePromise,
-    "Paciente cadastrado com sucesso!",
-    () => {
-      Inertia.visit('/pacientes');
-    },
-    (err) => (err instanceof Error ? err.message : "Erro ao cadastrar paciente")
-  );
-};
+
 
 </script>
 
@@ -121,8 +123,9 @@ const teste = () => {
   <Head title="Novo Paciente" />
 
   <AppLayout :breadcrumbs="breadcrumbs">
-    <Button @click="teste">teste</Button>
     <div class="flex flex-col gap-6 p-6 w-full">
+      <BarLoading v-if="loading" :progress="progress"></BarLoading>
+
       <form @submit.prevent="onSubmit">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField v-slot="{ componentField }" name="nome">
