@@ -86,42 +86,31 @@
 
 :root {
     --background: hsl(0 0% 100%);
-    /* branco */
     --foreground: hsl(210 15% 15%);
-    /* cinza escuro para textos */
     --card: hsl(0 0% 100%);
-    /* branco */
     --card-foreground: hsl(210 15% 15%);
     --popover: hsl(0 0% 100%);
     --popover-foreground: hsl(210 15% 15%);
 
     --primary: hsl(207 79% 44%);
-    /* azul primário */
     --primary-foreground: hsl(0 0% 98%);
-    /* texto sobre azul */
 
     --secondary: hsl(210 20% 92%);
-    /* azul suave para destaques secundários */
     --secondary-foreground: hsl(210 15% 15%);
 
     --muted: hsl(210 20% 96%);
-    /* cinza claro */
     --muted-foreground: hsl(210 15% 45%);
 
     --accent: hsl(207 79% 44%);
-    /* mesma cor primária para consistência */
     --accent-foreground: hsl(0 0% 98%);
 
     --destructive: hsl(0 74% 53%);
-    /* vermelho para alertas */
     --destructive-foreground: hsl(0 0% 98%);
 
     --success: hsl(141 53% 53%);
-    /* verde para confirmações */
     --success-foreground: hsl(0 0% 98%);
 
     --warning: hsl(43 100% 50%);
-    /* amarelo para alertas leves */
     --warning-foreground: hsl(0 0% 15%);
 
     --border: hsl(210 20% 87%);
@@ -129,15 +118,10 @@
     --ring: hsl(207 79% 44%);
 
     --chart-1: hsl(207 79% 44%);
-    /* azul */
     --chart-2: hsl(141 53% 53%);
-    /* verde */
     --chart-3: hsl(0 74% 53%);
-    /* vermelho */
     --chart-4: hsl(43 100% 50%);
-    /* amarelo */
     --chart-5: hsl(197 37% 40%);
-    /* azul aciano */
 
     --radius: 0.5rem;
 

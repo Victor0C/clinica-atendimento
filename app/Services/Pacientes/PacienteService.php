@@ -3,6 +3,7 @@
 namespace App\Services\Pacientes;
 
 use App\CreatePacienteServiceInterface;
+use App\DeletePacienteServiceInterface;
 use App\DTOs\Pacientes\CreatePacienteDTO;
 use App\DTOs\Pacientes\PacienteDTO;
 use App\GetPacienteServiceInterface;
@@ -22,5 +23,11 @@ class PacienteService implements PacienteServiceInterface
     $service = app()->make(GetPacienteServiceInterface::class);
 
     return $service->fire($id);
+  }
+
+  public function delete(int $id): void
+  {
+    $service = app()->make(DeletePacienteServiceInterface::class);
+    $service->fire($id);
   }
 }

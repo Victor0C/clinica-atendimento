@@ -20,6 +20,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/', [PacientesController::class, 'createPacientes']);
             Route::get('/novo', [PacientesController::class, 'getViewCreatePacientes']);
             Route::get('/detalhes/{id}', [PacientesController::class, 'getViewDetalhesPacientes']);
+            Route::delete('delete/{id}', [PacientesController::class, 'deletarPaciente']);
         }
     );
 });

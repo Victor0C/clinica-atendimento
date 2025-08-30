@@ -6,6 +6,7 @@ import { Head } from '@inertiajs/vue3';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import DadosPessoais from './TabsContents/DadosPessoais.vue';
 import DadosEndereco from './TabsContents/DadosEndereco.vue';
+import Button from '@/components/ui/button/Button.vue';
 
 
 const props = defineProps<{ paciente: PacienteInterface }>();
@@ -49,8 +50,12 @@ const tabList = [
         <TabsContent v-for="(tab, index) in tabList" :key="index" :value="tab.value" class="p-0">
           <component :is="tab.component" :paciente="props.paciente" />
         </TabsContent>
-
       </Tabs>
+
+      <div class="flex justify-between mt-auto">
+        <Button variant="destructive">Deletar</Button>
+        <Button variant="outline">Editar</Button>
+      </div>
     </div>
   </AppLayout>
 </template>

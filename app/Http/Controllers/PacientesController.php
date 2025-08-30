@@ -35,4 +35,14 @@ class PacientesController extends Controller
             return RequestHelper::onError($e);
         }
     }
+
+    public function deletarPaciente($id, PacienteServiceInterface $pacienteService)
+    {
+        try {
+            $pacienteService->delete($id);
+            return response()->noContent();
+        } catch (\Throwable $e) {
+            return RequestHelper::onError($e);
+        }
+    }
 }
