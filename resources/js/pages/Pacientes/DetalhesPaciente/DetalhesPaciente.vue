@@ -40,8 +40,9 @@ const tabList = [
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="flex h-full flex-1 flex-col gap-4 p-4 overflow-x-auto">
       <Tabs :default-value="tabList[0].value">
-        <TabsList>
-          <TabsTrigger v-for="(tab, index) in tabList" :key="index" :value="tab.value">
+        <TabsList class="bg-[var(--sidebar-primary-foreground)]">
+          <TabsTrigger class="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            v-for="(tab, index) in tabList" :key="index" :value="tab.value">
             {{ tab.name }}
           </TabsTrigger>
         </TabsList>
