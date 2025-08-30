@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use App\CreatePacienteServiceInterface;
+use App\GetPacienteServiceInterface;
 use App\Helpers\AppHelper;
 use App\PacienteServiceInterface;
 use App\Services\Pacientes\CreatePacienteService;
+use App\Services\Pacientes\GetPacienteService;
 use App\Services\Pacientes\PacienteService;
 use Illuminate\Support\ServiceProvider;
 
@@ -27,6 +29,7 @@ class PacientesProvider extends ServiceProvider
         $bindings = [
             PacienteServiceInterface::class => PacienteService::class,
             CreatePacienteServiceInterface::class => CreatePacienteService::class,
+            GetPacienteServiceInterface::class => GetPacienteService::class,
         ];
 
         AppHelper::bindMultiple($this->app, $bindings);

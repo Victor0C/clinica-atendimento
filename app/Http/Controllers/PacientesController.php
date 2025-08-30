@@ -11,11 +11,20 @@ use Inertia\Inertia;
 class PacientesController extends Controller
 {
     public function getViewPacientes(){
-        return Inertia::render('Pacientes');
+        return Inertia::render('Pacientes/Pacientes');
     }
     public function getViewCreatePacientes()
     {
-        return Inertia::render('CriarEditarPaciente');
+        return Inertia::render('Pacientes/CriarEditarPaciente');
+    }
+
+    public function getViewDetalhesPacientes($id, PacienteServiceInterface $pacienteService)
+    {
+        try {
+            return Inertia::render('Pacientes/DetalhesPaciente/DetalhesPaciente')->with(['paciente' => $pacienteService->get($id)]);
+        } catch (\Throwable $e) {
+            return RequestHelper::onError($e);
+        }
     }
 
     public function createPacientes(CreatePacienteRequest $request, PacienteServiceInterface $pacienteService)

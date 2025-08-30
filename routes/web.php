@@ -19,6 +19,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/', [PacientesController::class, 'getViewPacientes']);
             Route::post('/', [PacientesController::class, 'createPacientes']);
             Route::get('/novo', [PacientesController::class, 'getViewCreatePacientes']);
+            Route::get('/detalhes/{id}', [PacientesController::class, 'getViewDetalhesPacientes']);
         }
     );
 });

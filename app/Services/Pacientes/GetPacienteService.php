@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Services\Pacientes;
+
+use App\GetPacienteServiceInterface;
+use App\DTOs\Pacientes\PacienteDTO;
+use App\Exceptions\Pacientes\NotFoundPacienteException;
+use App\Models\Paciente;
+
+class GetPacienteService implements GetPacienteServiceInterface
+{
+
+  public function fire(int $id): PacienteDTO
+  {
+    $paciente = Paciente::with(['enderecos'])->find($id);
+
+    if (!$paciente) {
+      throw new NotFoundPacienteException();
+    }
+
+    return new PacienteDTO($paciente->toArray());
+  }
+}
