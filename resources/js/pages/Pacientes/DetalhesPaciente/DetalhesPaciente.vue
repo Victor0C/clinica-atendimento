@@ -7,6 +7,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import DadosPessoais from './TabsContents/DadosPessoais.vue';
 import DadosEndereco from './TabsContents/DadosEndereco.vue';
 import Button from '@/components/ui/button/Button.vue';
+import { ref } from 'vue';
+import { deletePaciente } from '@/Services/PacienteService';
+import { Inertia } from '@inertiajs/inertia';
+import { wait } from '@/Utils';
+import { useToasts } from '@/composables/useToasts';
+import BarLoading from '@/components/Loading/BarLoading.vue';
+import ConfirmAction from '@/components/DialogAlerts/ConfirmAction.vue';
 
 
 const props = defineProps<{ paciente: PacienteInterface }>();
@@ -32,6 +39,33 @@ const tabList = [
   },
 ]
 
+const loading = ref(false);
+const progress = ref(0);
+
+
+const deletar = () => {
+  loading.value = true
+  deletePaciente(props.paciente.id)
+    .then(async () => {
+      progress.value = 100
+      await wait(500)
+      Inertia.visit('/pacientes')
+    })
+    .catch(async (err) => {
+      progress.value = 100
+
+      const { error } = useToasts()
+
+      await wait(500)
+
+      error(err instanceof Error ? err.message : "Erro ao cadastrar paciente")
+
+    }).finally(() => {
+      loading.value = false
+      progress.value = 0
+    });
+};
+
 </script>
 
 <template>
@@ -40,6 +74,7 @@ const tabList = [
 
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="flex h-full flex-1 flex-col gap-4 p-4 overflow-x-auto">
+      <BarLoading v-if="loading" :progress="progress"></BarLoading>
       <Tabs :default-value="tabList[0].value">
         <TabsList class="bg-[var(--sidebar-primary-foreground)]">
           <TabsTrigger class="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
@@ -53,7 +88,10 @@ const tabList = [
       </Tabs>
 
       <div class="flex justify-between mt-auto">
-        <Button variant="destructive">Deletar</Button>
+        <ConfirmAction title="Deseja realmente deletar esse paciente?" description="Essa ação não pode ser desfeita."
+          :onConfirm="deletar">
+          <Button variant="destructive">Deletar</Button>
+        </ConfirmAction>
         <Button variant="outline">Editar</Button>
       </div>
     </div>

@@ -9,6 +9,7 @@ export interface EnderecoInterface {
 }
 
 export interface PacienteInterface {
+    id: number;
     nome: string;
     data_nascimento: string; // formato 'YYYY-MM-DD'
     cpf: string;

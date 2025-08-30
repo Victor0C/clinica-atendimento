@@ -11,5 +11,13 @@ async function createPaciente(paciente: CreatePacienteInterface): Promise<Pacien
         throw new Error(message);
     }
 }
+async function deletePaciente(id: number): Promise<void> {
+    try {
+        await api.delete(`/pacientes/delete/${id}`);
+    } catch (error: any) {
+        const message = error.response?.data?.message || 'Erro ao deletar paciente. Tente novamente.';
+        throw new Error(message);
+    }
+}
 
-export { createPaciente };
+export { createPaciente, deletePaciente };
