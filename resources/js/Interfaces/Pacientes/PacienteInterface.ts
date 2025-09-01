@@ -11,7 +11,7 @@ export interface EnderecoInterface {
 export interface PacienteInterface {
     id: number;
     nome: string;
-    data_nascimento: string; // formato 'YYYY-MM-DD'
+    data_nascimento: string;
     cpf: string;
     rg: string;
     sexo: 'M' | 'F' | 'O';

@@ -2,13 +2,13 @@
 
 namespace App\Services\Pacientes;
 
-use App\CreatePacienteServiceInterface;
 use App\DTOs\Pacientes\CreatePacienteDTO;
 use App\DTOs\Pacientes\EnderecoDTO;
 use App\DTOs\Pacientes\PacienteDTO;
 use App\Exceptions\Pacientes\CpfPacienteAlreadyUsedException;
 use App\Exceptions\Pacientes\EmailAlreadyExistsException;
 use App\Exceptions\Pacientes\RgAlreadyExistsException;
+use App\Interfaces\Paciente\CreatePacienteServiceInterface;
 use App\Models\Endereco;
 use App\Models\Paciente;
 

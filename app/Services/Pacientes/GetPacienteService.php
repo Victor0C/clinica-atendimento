@@ -2,9 +2,9 @@
 
 namespace App\Services\Pacientes;
 
-use App\GetPacienteServiceInterface;
 use App\DTOs\Pacientes\PacienteDTO;
 use App\Exceptions\Pacientes\NotFoundPacienteException;
+use App\Interfaces\Paciente\GetPacienteServiceInterface;
 use App\Models\Paciente;
 
 class GetPacienteService implements GetPacienteServiceInterface

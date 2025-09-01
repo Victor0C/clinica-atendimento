@@ -3,16 +3,35 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\Pacientes\CreatePacienteDTO;
+use App\DTOs\Pacientes\SearchGetAllPacientesDTO;
+use App\Enums\Pacientes\GetAllEnum;
 use App\Helpers\RequestHelper;
 use App\Http\Requests\CreatePacienteRequest;
-use App\PacienteServiceInterface;;
-use Inertia\Inertia;
+use App\Interfaces\Paciente\PacienteServiceInterface;
+use Illuminate\Http\Request;
+use Inertia\Inertia;;
 
 class PacientesController extends Controller
 {
-    public function getViewPacientes(){
-        return Inertia::render('Pacientes/Pacientes');
+    public function getViewPacientes(Request $request, PacienteServiceInterface $pacienteService)
+    {
+        $page = $request->input('page', GetAllEnum::PAGE->value);
+        $perPage = $request->input('perPage', GetAllEnum::PER_PAGE->value);
+        $searchDTO = new SearchGetAllPacientesDTO(
+            cpf: $request->input('cpf'),
+            name: $request->input('name'),
+            email: $request->input('email')
+        );
+
+        $pageData = $pacienteService->getAll($page, $perPage, $searchDTO);
+
+        if ($request->wantsJson()) {
+            return response()->json($pageData);
+        }
+
+        return Inertia::render('Pacientes/Pacientes')->with(['page' => $pageData]);
     }
+
     public function getViewCreatePacientes()
     {
         return Inertia::render('Pacientes/CriarEditarPaciente');

@@ -2,8 +2,8 @@
 
 namespace App\Services\Pacientes;
 
-use App\DeletePacienteServiceInterface;
 use App\Exceptions\Pacientes\NotFoundPacienteException;
+use App\Interfaces\Paciente\DeletePacienteServiceInterface;
 use App\Models\Paciente;
 
 class DeletePacienteService implements DeletePacienteServiceInterface
