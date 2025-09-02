@@ -243,18 +243,6 @@ const search = () => {
           </TableBody>
         </Table>
       </div>
-
-      <div class="flex items-center justify-end space-x-2 py-4">
-
-        <div class="space-x-2">
-          <Button variant="outline" size="sm" :disabled="!table.getCanPreviousPage()" @click="table.previousPage()">
-            Anterior
-          </Button>
-          <Button variant="outline" size="sm" :disabled="!table.getCanNextPage()" @click="table.nextPage()">
-            Próxima
-          </Button>
-        </div>
-      </div>
     </div>
 
 
