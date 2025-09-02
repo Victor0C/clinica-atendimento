@@ -9,11 +9,12 @@ import type {
 import {
   FlexRender,
   getCoreRowModel,
-  getPaginationRowModel,
   useVueTable
 } from "@tanstack/vue-table";
 import { computed, h, ref, watch } from "vue";
 
+import { PacienteInterface } from '@/Interfaces/Pacientes/PacienteInterface';
+import SearchInput from '@/components/Inputs/SearchInput.vue';
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -23,11 +24,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import SearchInput from '@/components/Inputs/SearchInput.vue';
-import { Eye, Plus, Search } from 'lucide-vue-next';
-import { PacienteInterface } from '@/Interfaces/Pacientes/PacienteInterface';
 import { useIsMobile } from '@/composables/useIsMobile';
 import type { Row } from "@tanstack/vue-table";
+import { Eye, Plus, Search } from 'lucide-vue-next';
+import BarLoading from '@/components/Loading/BarLoading.vue';
+import { getAllPacientes } from '@/Services/PacienteService';
+import { SearchPacienteInterface } from '@/Interfaces/Pacientes/SearchPacienteInterfa';
+import { wait } from '@/Utils';
+import { useToasts } from '@/composables/useToasts';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -86,7 +90,6 @@ const allColumns: ColumnDef<PacienteInterface>[] = [
   },
 ]
 
-
 const columns = computed(() => {
   if (isMobile.value) {
     const nomeCol = allColumns.find(col => col.header === 'Nome');
@@ -112,19 +115,72 @@ const columns = computed(() => {
   return allColumns;
 });
 
+const table = computed(() =>
+  useVueTable({
+    data: localPage.value,
+    columns: columns.value,
+    getCoreRowModel: getCoreRowModel(),
+  })
+)
 
+const loading = ref(false);
+const progress = ref(0);
+const searchParams = ref<SearchPacienteInterface>({
+  page: 1,
+  perPage: 15,
+  cpf: '',
+  name: '',
+  email: '',
+});
 
+const searchValue = ref('');
 
-const table = useVueTable({
-  data: localPage.value,
-  columns: columns.value,
-  getCoreRowModel: getCoreRowModel(),
-  getPaginationRowModel: getPaginationRowModel(),
-})
+const isCPF = (value: string) => /^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/.test(value);
+const isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
+watch(
+  searchValue,
+  (newValue) => {
+    searchParams.value.cpf = '';
+    searchParams.value.name = '';
+    searchParams.value.email = '';
 
+    if (!newValue) return;
 
+    if (isCPF(newValue)) {
+      searchParams.value.cpf = newValue;
+    } else if (isEmail(newValue)) {
+      searchParams.value.email = newValue;
+    } else {
+      searchParams.value.name = newValue;
+    }
 
+    searchParams.value.page = 1;
+  }
+);
+
+const search = () => {
+  loading.value = true
+  getAllPacientes(searchParams.value)
+    .then(async (newPage) => {
+      progress.value = 100
+      await wait(500)
+      localPage.value = newPage
+    })
+    .catch(async (err) => {
+      progress.value = 100
+
+      const { error } = useToasts()
+
+      await wait(500)
+
+      error(err instanceof Error ? err.message : "Erro ao buscar pacientes")
+
+    }).finally(() => {
+      loading.value = false
+      progress.value = 0
+    });
+};
 
 </script>
 
@@ -134,11 +190,13 @@ const table = useVueTable({
 
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="flex h-full flex-1 flex-col gap-4 p-4 overflow-x-auto">
+      <BarLoading v-if="loading" :progress="progress"></BarLoading>
       <div class="flex flex-col sm:flex-row w-full gap-2">
         <div class="flex gap-2 w-full">
 
-          <SearchInput id="1" placeholder="Pesquise pelo nome do paciente" />
-          <Button>
+          <SearchInput v-model="searchValue" id="1" placeholder="Pesquise pelo nome, email ou cpf do paciente"
+            :disabled="loading" @enter="search" />
+          <Button @click="search" :disabled="loading">
             <Search />
           </Button>
         </div>
@@ -162,8 +220,9 @@ const table = useVueTable({
           </TableHeader>
           <TableBody>
             <template v-if="table.getRowModel().rows?.length">
-              <template v-for="row in table.getRowModel().rows" :key="row.id">
-                <TableRow :data-state="row.getIsSelected() && 'selected'">
+              <template v-for="(row, index) in table.getRowModel().rows" :key="row.id">
+                <TableRow :data-state="row.getIsSelected() && 'selected'"
+                  :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-50'">
                   <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
                     <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
                   </TableCell>
@@ -178,7 +237,7 @@ const table = useVueTable({
 
             <TableRow v-else>
               <TableCell :colspan="columns.length" class="h-24 text-center">
-                No results.
+                Sem resultados...
               </TableCell>
             </TableRow>
           </TableBody>

@@ -1,6 +1,23 @@
 import { CreatePacienteInterface } from '@/Interfaces/Pacientes/CreatePacienteInterface';
 import { PacienteInterface } from '@/Interfaces/Pacientes/PacienteInterface';
 import api from './api';
+import { SearchPacienteInterface } from '@/Interfaces/Pacientes/SearchPacienteInterfa';
+
+async function getAllPacientes(search: SearchPacienteInterface): Promise<PacienteInterface[]> {
+    try {
+        const response = await api.get('/pacientes', {
+            params: {
+                ...search,
+            },
+        });
+
+        return response.data;
+    } catch (error: any) {
+        const message = error.response?.data?.message || 'Erro ao buscar pacientes. Tente novamente.';
+        throw new Error(message);
+    }
+}
+
 
 async function createPaciente(paciente: CreatePacienteInterface): Promise<PacienteInterface> {
     try {
@@ -20,4 +37,4 @@ async function deletePaciente(id: number): Promise<void> {
     }
 }
 
-export { createPaciente, deletePaciente };
+export { createPaciente, deletePaciente, getAllPacientes };
