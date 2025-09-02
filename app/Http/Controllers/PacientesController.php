@@ -7,6 +7,7 @@ use App\DTOs\Pacientes\SearchGetAllPacientesDTO;
 use App\Enums\Pacientes\GetAllEnum;
 use App\Helpers\RequestHelper;
 use App\Http\Requests\CreatePacienteRequest;
+use App\Http\Requests\EditPacienteRequest;
 use App\Interfaces\Paciente\PacienteServiceInterface;
 use Illuminate\Http\Request;
 use Inertia\Inertia;;
@@ -35,6 +36,24 @@ class PacientesController extends Controller
     public function getViewCreatePacientes()
     {
         return Inertia::render('Pacientes/CriarEditarPaciente');
+    }
+
+    public function getViewEditarPaciente($id, PacienteServiceInterface $pacienteService)
+    {
+        try {
+            return Inertia::render('Pacientes/CriarEditarPaciente')->with(['paciente' => $pacienteService->get($id)]);
+        } catch (\Throwable $e) {
+            return RequestHelper::onError($e);
+        }
+    }
+
+    public function editPaciente(EditPacienteRequest $request, $id, PacienteServiceInterface $pacienteService)
+    {
+        try {
+            return response()->json($pacienteService->edit($id, $request->validated()), 200);
+        } catch (\Throwable $e) {
+            return RequestHelper::onError($e);
+        }
     }
 
     public function getViewDetalhesPacientes($id, PacienteServiceInterface $pacienteService)

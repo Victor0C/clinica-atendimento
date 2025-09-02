@@ -19,6 +19,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/', [PacientesController::class, 'getViewPacientes']);
             Route::post('/', [PacientesController::class, 'createPacientes']);
             Route::get('/novo', [PacientesController::class, 'getViewCreatePacientes']);
+            Route::get('/editar/{id}', [PacientesController::class, 'getViewEditarPaciente']);
+            Route::put('/editar/{id}', [PacientesController::class, 'editPaciente']);
             Route::get('/detalhes/{id}', [PacientesController::class, 'getViewDetalhesPacientes']);
             Route::delete('delete/{id}', [PacientesController::class, 'deletarPaciente']);
         }

@@ -92,7 +92,8 @@ const deletar = () => {
           :onConfirm="deletar">
           <Button variant="destructive">Deletar</Button>
         </ConfirmAction>
-        <Button variant="outline">Editar</Button>
+        <Button variant="outline"
+          @click="() => { Inertia.visit(`/pacientes/editar/${props.paciente.id}`) }">Editar</Button>
       </div>
     </div>
   </AppLayout>

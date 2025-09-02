@@ -1,7 +1,6 @@
-import { CreatePacienteInterface } from '@/Interfaces/Pacientes/CreatePacienteInterface';
 import { PacienteInterface } from '@/Interfaces/Pacientes/PacienteInterface';
-import api from './api';
 import { SearchPacienteInterface } from '@/Interfaces/Pacientes/SearchPacienteInterfa';
+import api from './api';
 
 async function getAllPacientes(search: SearchPacienteInterface): Promise<PacienteInterface[]> {
     try {
@@ -18,8 +17,7 @@ async function getAllPacientes(search: SearchPacienteInterface): Promise<Pacient
     }
 }
 
-
-async function createPaciente(paciente: CreatePacienteInterface): Promise<PacienteInterface> {
+async function createPaciente(paciente: PacienteInterface): Promise<PacienteInterface> {
     try {
         const response = await api.post('/pacientes', paciente);
         return response.data;
@@ -28,6 +26,17 @@ async function createPaciente(paciente: CreatePacienteInterface): Promise<Pacien
         throw new Error(message);
     }
 }
+
+async function editarPaciente(paciente: PacienteInterface): Promise<PacienteInterface> {
+    try {
+        const response = await api.put(`/pacientes/editar/${paciente.id}`, paciente);
+        return response.data;
+    } catch (error: any) {
+        const message = error.response?.data?.message || 'Erro ao editar paciente. Tente novamente.';
+        throw new Error(message);
+    }
+}
+
 async function deletePaciente(id: number): Promise<void> {
     try {
         await api.delete(`/pacientes/delete/${id}`);
@@ -37,4 +46,4 @@ async function deletePaciente(id: number): Promise<void> {
     }
 }
 
-export { createPaciente, deletePaciente, getAllPacientes };
+export { createPaciente, deletePaciente, editarPaciente, getAllPacientes };

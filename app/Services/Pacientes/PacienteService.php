@@ -5,6 +5,7 @@ namespace App\Services\Pacientes;
 use App\DTOs\Pacientes\CreatePacienteDTO;
 use App\DTOs\Pacientes\PacienteDTO;
 use App\DTOs\Pacientes\SearchGetAllPacientesDTO;
+use App\Interfaces\EditPacienteServiceInterface;
 use App\Interfaces\Paciente\CreatePacienteServiceInterface;
 use App\Interfaces\Paciente\DeletePacienteServiceInterface;
 use App\Interfaces\Paciente\GetAllPacienteServiceInterface;
@@ -37,5 +38,11 @@ class PacienteService implements PacienteServiceInterface
   {
     $service = app()->make(DeletePacienteServiceInterface::class);
     $service->fire($id);
+  }
+
+  public function edit(int $id, array $data): PacienteDTO
+  {
+    $service = app()->make(EditPacienteServiceInterface::class);
+    return $service->fire($id, $data);
   }
 }

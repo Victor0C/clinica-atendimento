@@ -11,5 +11,6 @@ interface PacienteServiceInterface
     public function get(int $id): PacienteDTO;
     public function getAll(int $page, int $perPage = 20, ?SearchGetAllPacientesDTO $searchDTO = null): array;
     public function create(CreatePacienteDTO $dto): PacienteDTO;
+    public function edit(int $id, array $data): PacienteDTO;
     public function delete(int $id): void;
 }
