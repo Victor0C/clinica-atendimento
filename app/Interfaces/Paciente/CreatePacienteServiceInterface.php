@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Interfaces\Paciente;
 
 use App\DTOs\Pacientes\CreatePacienteDTO;
 use App\DTOs\Pacientes\PacienteDTO;
