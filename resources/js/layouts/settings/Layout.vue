@@ -14,10 +14,6 @@ const sidebarNavItems: NavItem[] = [
         title: 'Senha',
         href: '/settings/password',
     },
-    {
-        title: 'Aparência',
-        href: '/settings/appearance',
-    },
 ];
 
 const page = usePage();
