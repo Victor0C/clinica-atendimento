@@ -26,16 +26,16 @@ defineProps<Props>();
     <DropdownMenuGroup>
         <DropdownMenuItem :as-child="true">
             <Link class="block w-full" :href="route('profile.edit')" prefetch as="button">
-                <Settings class="mr-2 h-4 w-4" />
-                Configurações
+            <Settings class="mr-2 h-4 w-4 group-hover:text-accent-foreground" />
+            Configurações
             </Link>
         </DropdownMenuItem>
     </DropdownMenuGroup>
     <DropdownMenuSeparator />
     <DropdownMenuItem :as-child="true">
         <Link class="block w-full" method="post" :href="route('logout')" @click="handleLogout" as="button">
-            <LogOut class="mr-2 h-4 w-4" />
-            Sair
+        <LogOut class="mr-2 h-4 w-4 group-hover:text-accent-foreground" />
+        Sair
         </Link>
     </DropdownMenuItem>
 </template>
