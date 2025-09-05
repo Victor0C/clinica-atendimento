@@ -9,12 +9,12 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import Progress from '@/components/ui/progress/Progress.vue'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { useToasts } from '@/composables/useToasts'
+import { PacienteInterface } from '@/Interfaces/Pacientes/PacienteInterface'
 import AppLayout from '@/layouts/AppLayout.vue'
-import { createPaciente } from '@/Services/PacienteService'
+import { createPaciente, editarPaciente } from '@/Services/PacienteService'
 import { BreadcrumbItem } from '@/types'
 import { wait } from '@/Utils'
 import { Inertia } from '@inertiajs/inertia'
@@ -24,16 +24,49 @@ import { useForm } from 'vee-validate'
 import { ref } from 'vue'
 import * as z from 'zod'
 
-
+const props = withDefaults(
+  defineProps<{ paciente: PacienteInterface }>(),
+  {
+    paciente: () => ({
+      id: 0,
+      nome: '',
+      data_nascimento: '',
+      cpf: '',
+      rg: '',
+      sexo: 'M',
+      telefone_fixo: '',
+      celular: '',
+      email: '',
+      convenio: '',
+      numero_carteirinha: '',
+      observacoes: '',
+      status: 'ativo',
+      enderecos: [
+        {
+          id: 0,
+          logradouro: '',
+          numero: 'S/N',
+          complemento: '',
+          bairro: '',
+          cidade: '',
+          estado: '',
+          cep: '',
+        },
+      ],
+    }),
+  }
+)
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: 'Novo paciente',
-    href: '/pacientes/novo',
+    title: props.paciente.id ? 'Editar paciente' : 'Novo paciente',
+    href: props.paciente.id ? '/pacientes/editar' : '/pacientes/novo',
   },
 ]
 
+
 const formSchema = toTypedSchema(z.object({
+  id: z.number(),
   nome: z.string().min(1, "O nome é obrigatório").max(255),
   data_nascimento: z.string().min(1, "Data de nascimento é obrigatória"),
   cpf: z.string().length(14, "CPF deve ter 14 caracteres"),
@@ -48,6 +81,7 @@ const formSchema = toTypedSchema(z.object({
   status: z.enum(["ativo", "inativo"], { errorMap: () => ({ message: "Status inválido" }) }),
 
   enderecos: z.array(z.object({
+    id: z.number(),
     logradouro: z.string().min(1, "Logradouro é obrigatório").max(255),
     numero: z.string().max(10).optional().nullable(),
     complemento: z.string().max(255).optional().nullable(),
@@ -60,31 +94,7 @@ const formSchema = toTypedSchema(z.object({
 
 const form = useForm({
   validationSchema: formSchema,
-  initialValues: {
-    nome: '',
-    data_nascimento: '',
-    cpf: '',
-    rg: '',
-    sexo: 'M',
-    telefone_fixo: '',
-    celular: '',
-    email: '',
-    convenio: '',
-    numero_carteirinha: '',
-    observacoes: '',
-    status: 'ativo',
-    enderecos: [
-      {
-        logradouro: '',
-        numero: '',
-        complemento: '',
-        bairro: '',
-        cidade: '',
-        estado: '',
-        cep: '',
-      },
-    ],
-  },
+  initialValues: props.paciente
 })
 
 const loading = ref(false);
@@ -93,25 +103,48 @@ const progress = ref(0);
 
 const onSubmit = form.handleSubmit((values) => {
   loading.value = true
-  createPaciente(values)
-    .then(async () => {
-      progress.value = 100
-      await wait(500)
-      Inertia.visit('/pacientes')
-    })
-    .catch(async (err) => {
-      progress.value = 100
+  if (props.paciente.id) {
+    editarPaciente(values)
+      .then(async (paciente) => {
+        progress.value = 100
+        await wait(500)
+        Inertia.visit(`/pacientes/detalhes/${paciente.id}`)
+      })
+      .catch(async (err) => {
+        progress.value = 100
 
-      const { error } = useToasts()
+        const { error } = useToasts()
 
-      await wait(500)
+        await wait(500)
 
-      error(err instanceof Error ? err.message : "Erro ao cadastrar paciente")
+        error(err instanceof Error ? err.message : "Erro ao cadastrar paciente")
 
-    }).finally(() => {
-      loading.value = false
-      progress.value = 0
-    });
+      }).finally(() => {
+        loading.value = false
+        progress.value = 0
+      });
+
+  } else {
+    createPaciente(values)
+      .then(async (paciente) => {
+        progress.value = 100
+        await wait(500)
+        Inertia.visit(`/pacientes/detalhes/${paciente.id}`)
+      })
+      .catch(async (err) => {
+        progress.value = 100
+
+        const { error } = useToasts()
+
+        await wait(500)
+
+        error(err instanceof Error ? err.message : "Erro ao cadastrar paciente")
+
+      }).finally(() => {
+        loading.value = false
+        progress.value = 0
+      });
+  }
 });
 
 
@@ -120,7 +153,7 @@ const onSubmit = form.handleSubmit((values) => {
 
 <template>
 
-  <Head title="Novo Paciente" />
+  <Head :title="props.paciente.id ? 'Editar paciente' : 'Novo paciente'" />
 
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="flex flex-col gap-6 p-6 w-full">
@@ -276,15 +309,27 @@ const onSubmit = form.handleSubmit((values) => {
           </FormField>
 
 
-          <FormField v-slot="{ componentField }" name="enderecos[0].logradouro">
-            <FormItem class="col-span-full">
-              <FormLabel>Logradouro</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="logradouro" v-bind="componentField" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
+          <div class="grid grid-cols-12 gap-4 col-span-full">
+            <FormField v-slot="{ componentField }" name="enderecos[0].logradouro">
+              <FormItem class="col-span-12 md:col-span-8">
+                <FormLabel>Logradouro</FormLabel>
+                <FormControl>
+                  <Input type="text" placeholder="logradouro" v-bind="componentField" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+
+            <FormField v-slot="{ componentField }" name="enderecos[0].numero">
+              <FormItem class="col-span-12 md:col-span-4">
+                <FormLabel>Número</FormLabel>
+                <FormControl>
+                  <Input type="text" placeholder="S/N" v-bind="componentField" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+          </div>
 
           <FormField v-slot="{ componentField }" name="enderecos[0].bairro">
             <FormItem>
@@ -299,8 +344,51 @@ const onSubmit = form.handleSubmit((values) => {
           <FormField v-slot="{ componentField }" name="enderecos[0].estado">
             <FormItem>
               <FormLabel>Estado</FormLabel>
+              <Select v-bind="componentField">
+                <FormControl>
+                  <SelectTrigger class="w-full">
+                    <SelectValue placeholder="Selecione o estado..." />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="AC">Acre</SelectItem>
+                  <SelectItem value="AL">Alagoas</SelectItem>
+                  <SelectItem value="AP">Amapá</SelectItem>
+                  <SelectItem value="AM">Amazonas</SelectItem>
+                  <SelectItem value="BA">Bahia</SelectItem>
+                  <SelectItem value="CE">Ceará</SelectItem>
+                  <SelectItem value="DF">Distrito Federal</SelectItem>
+                  <SelectItem value="ES">Espírito Santo</SelectItem>
+                  <SelectItem value="GO">Goiás</SelectItem>
+                  <SelectItem value="MA">Maranhão</SelectItem>
+                  <SelectItem value="MT">Mato Grosso</SelectItem>
+                  <SelectItem value="MS">Mato Grosso do Sul</SelectItem>
+                  <SelectItem value="MG">Minas Gerais</SelectItem>
+                  <SelectItem value="PA">Pará</SelectItem>
+                  <SelectItem value="PB">Paraíba</SelectItem>
+                  <SelectItem value="PR">Paraná</SelectItem>
+                  <SelectItem value="PE">Pernambuco</SelectItem>
+                  <SelectItem value="PI">Piauí</SelectItem>
+                  <SelectItem value="RJ">Rio de Janeiro</SelectItem>
+                  <SelectItem value="RN">Rio Grande do Norte</SelectItem>
+                  <SelectItem value="RS">Rio Grande do Sul</SelectItem>
+                  <SelectItem value="RO">Rondônia</SelectItem>
+                  <SelectItem value="RR">Roraima</SelectItem>
+                  <SelectItem value="SC">Santa Catarina</SelectItem>
+                  <SelectItem value="SP">São Paulo</SelectItem>
+                  <SelectItem value="SE">Sergipe</SelectItem>
+                  <SelectItem value="TO">Tocantins</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+
+          <FormField v-slot="{ componentField }" name="enderecos[0].complemento">
+            <FormItem class="col-span-full">
+              <FormLabel>Complemento</FormLabel>
               <FormControl>
-                <Input type="text" placeholder="UF" v-bind="componentField" />
+                <Input type="text" placeholder="Complemento" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -310,7 +398,7 @@ const onSubmit = form.handleSubmit((values) => {
 
 
         <div class="w-full flex justify-end mt-4">
-          <Button type="submit" class="mt-4">Cadastrar paciente</Button>
+          <Button type="submit" class="mt-4">Salvar informações do paciente</Button>
         </div>
       </form>
     </div>
