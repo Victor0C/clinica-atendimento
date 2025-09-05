@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import InputError from '@/components/InputError.vue';
-import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -16,7 +15,7 @@ defineProps<{
 </script>
 
 <template>
-    <AuthBase title="Sistema de Atendimento Clínico." description="Exames disponíveis onde e quando você precisar.">
+    <AuthBase title="Sistema de Atendimento Clínico" description="Exames disponíveis onde e quando você precisar">
 
         <Head title="Log in" />
 
