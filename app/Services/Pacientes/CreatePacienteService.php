@@ -24,12 +24,11 @@ class CreatePacienteService implements CreatePacienteServiceInterface
     $pacienteDto = new PacienteDTO($paciente->toArray());
 
     foreach ($dto->enderecos as $enderecoDTO) {
-      $pacienteDto->enderecos[] = new EnderecoDTO(
-        Endereco::create(
-          array_merge(['paciente_id' => $pacienteDto->id], $enderecoDTO->toArray())
-        )->toArray()
-      );
+      $endereco = Endereco::create($enderecoDTO->toArray());
+      $paciente->enderecos()->attach($endereco->id);
+      $pacienteDto->enderecos[] = new EnderecoDTO($endereco->toArray());
     }
+
 
     return $pacienteDto;
   }
@@ -39,6 +38,7 @@ class CreatePacienteService implements CreatePacienteServiceInterface
     $existingPacientes = Paciente::where('cpf', $dto->cpf)
       ->orWhere('rg', $dto->rg)
       ->orWhere('email', $dto->email)
+      ->withTrashed()
       ->get(['cpf', 'rg', 'email']);
 
     foreach ($existingPacientes as $paciente) {

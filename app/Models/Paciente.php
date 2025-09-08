@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -27,8 +28,8 @@ class Paciente extends Model
         'status',
     ];
 
-    public function enderecos(): HasMany
+    public function enderecos(): BelongsToMany
     {
-        return $this->hasMany(Endereco::class, 'paciente_id', 'id');
+        return $this->belongsToMany(Endereco::class, 'endereco_paciente', 'paciente_id', 'endereco_id')->withTimestamps();
     }
 }
