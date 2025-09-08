@@ -1,10 +1,11 @@
+import { ClinicaInterface } from '@/Interfaces/Clinicas/ClinicaInterface';
+import { SearchClinicaInterface } from '@/Interfaces/Clinicas/SearchClinicaInterface';
 import { PacienteInterface } from '@/Interfaces/Pacientes/PacienteInterface';
-import { SearchPacienteInterface } from '@/Interfaces/Pacientes/SearchPacienteInterface';
 import api from './api';
 
-async function getAllPacientes(search: SearchPacienteInterface): Promise<PacienteInterface[]> {
+async function getAllClinicas(search: SearchClinicaInterface): Promise<ClinicaInterface[]> {
     try {
-        const response = await api.get('/pacientes', {
+        const response = await api.get('/clinicas', {
             params: {
                 ...search,
             },
@@ -12,7 +13,7 @@ async function getAllPacientes(search: SearchPacienteInterface): Promise<Pacient
 
         return response.data;
     } catch (error: any) {
-        const message = error.response?.data?.message || 'Erro ao buscar pacientes. Tente novamente.';
+        const message = error.response?.data?.message || 'Erro ao buscar clinicas. Tente novamente.';
         throw new Error(message);
     }
 }
@@ -46,4 +47,4 @@ async function deletePaciente(id: number): Promise<void> {
     }
 }
 
-export { createPaciente, deletePaciente, editarPaciente, getAllPacientes };
+export { createPaciente, deletePaciente, editarPaciente, getAllClinicas };
