@@ -5,6 +5,7 @@ namespace App\Services\Pacientes;
 use App\Interfaces\EditPacienteServiceInterface;
 use App\DTOs\Pacientes\PacienteDTO;
 use App\Exceptions\Pacientes\NotFoundPacienteException;
+use App\Helpers\VerifyPacienteUniquesHelper;
 use App\Interfaces\Paciente\PacienteServiceInterface;
 use App\Models\Paciente;
 
@@ -20,7 +21,7 @@ class EditPacienteService implements EditPacienteServiceInterface
     if (!$paciente) {
       throw new NotFoundPacienteException();
     }
-
+    VerifyPacienteUniquesHelper::verifyUniquesForEdit($id, $data);
     $paciente->fill($data);
     $paciente->save();
 
