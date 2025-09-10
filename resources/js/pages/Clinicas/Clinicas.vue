@@ -195,7 +195,7 @@ const search = () => {
       <div class="flex flex-col sm:flex-row w-full gap-2">
         <div class="flex gap-2 w-full">
 
-          <SearchInput v-model="searchValue" id="1" placeholder="Pesquise pelo nome, email ou cpf do paciente"
+          <SearchInput v-model="searchValue" id="1" placeholder="Pesquise pelo nome fantsia, razão social ou cnpj da clinica"
             :disabled="loading" @enter="search" />
           <Button @click="search" :disabled="loading">
             <Search />
