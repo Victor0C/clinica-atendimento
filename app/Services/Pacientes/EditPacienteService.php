@@ -4,7 +4,12 @@ namespace App\Services\Pacientes;
 
 use App\Interfaces\EditPacienteServiceInterface;
 use App\DTOs\Pacientes\PacienteDTO;
+use App\Exceptions\Pacientes\CpfPacienteAlreadyUsedException;
+use App\Exceptions\Pacientes\EmailAlreadyExistsException;
 use App\Exceptions\Pacientes\NotFoundPacienteException;
+use App\Exceptions\Pacientes\RgAlreadyExistsException;
+use App\Helpers\VerifyPacienteUniquesHelper;
+use App\Helpers\VerifyUniquesHelper;
 use App\Interfaces\Paciente\PacienteServiceInterface;
 use App\Models\Paciente;
 
@@ -20,6 +25,18 @@ class EditPacienteService implements EditPacienteServiceInterface
     if (!$paciente) {
       throw new NotFoundPacienteException();
     }
+
+    VerifyUniquesHelper::verifyUniquesForEdit(
+      Paciente::class,
+      $id,
+      $data,
+      ['cpf', 'rg', 'email'],
+      [
+        'cpf' => CpfPacienteAlreadyUsedException::class,
+        'rg' => RgAlreadyExistsException::class,
+        'email' => EmailAlreadyExistsException::class
+      ]
+    );
 
     $paciente->fill($data);
     $paciente->save();

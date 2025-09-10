@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Exceptions\Pacientes;
+namespace App\Exceptions\Clinicas;
 
 use Exception;
 
-class EmailAlreadyExistsException extends Exception
+class RazaoSocialClinicaAlreadyUsedException extends Exception
 {
-  protected $message = 'E-mail já em uso';
+  protected $message = 'Razão social já cadastrada em outra clinica';
   protected $code = 422;
 
   public function __construct($message = null, $code = null)

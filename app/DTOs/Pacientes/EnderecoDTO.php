@@ -9,7 +9,6 @@ class EnderecoDTO
   use ToArrayTrait;
 
   public int $id;
-  public int $paciente_id;
   public string $logradouro;
   public ?string $numero = null;
   public ?string $complemento = null;
@@ -21,7 +20,6 @@ class EnderecoDTO
   public function __construct(array $data)
   {
     $this->id = $data['id'];
-    $this->paciente_id = $data['paciente_id'];
     $this->logradouro = $data['logradouro'];
     $this->numero = $data['numero'] ?? null;
     $this->complemento = $data['complemento'] ?? null;

@@ -1,36 +1,37 @@
 <script setup lang="ts">
-import { PacienteInterface } from '@/Interfaces/Pacientes/PacienteInterface';
-import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/vue3';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import DadosPessoais from './TabsContents/DadosPessoais.vue';
-import DadosEndereco from './TabsContents/DadosEndereco.vue';
-import Button from '@/components/ui/button/Button.vue';
-import { ref } from 'vue';
-import { deletePaciente } from '@/Services/PacienteService';
-import { Inertia } from '@inertiajs/inertia';
+import { ClinicaInterface } from '@/Interfaces/Clinicas/ClinicaInterface';
+import { deleteClinica } from '@/Services/ClinicaServcie';
 import { wait } from '@/Utils';
-import { useToasts } from '@/composables/useToasts';
-import BarLoading from '@/components/Loading/BarLoading.vue';
 import ConfirmAction from '@/components/DialogAlerts/ConfirmAction.vue';
+import BarLoading from '@/components/Loading/BarLoading.vue';
+import Button from '@/components/ui/button/Button.vue';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useToasts } from '@/composables/useToasts';
+import AppLayout from '@/layouts/AppLayout.vue';
+import DadosEndereco from '@/pages/Pacientes/DetalhesPaciente/TabsContents/DadosEndereco.vue';
+import { type BreadcrumbItem } from '@/types';
+import { Inertia } from '@inertiajs/inertia';
+import { Head } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import DadosClinica from './TabsContents/DadosClinica.vue';
 
 
-const props = defineProps<{ paciente: PacienteInterface }>();
+
+const props = defineProps<{ clinica: ClinicaInterface }>();
 
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: 'Detalhes do paciente',
-    href: '/paciente',
+    title: 'Detalhes da clinica',
+    href: '/clinicas',
   },
 ];
 
 const tabList = [
   {
-    name: 'Dados Pessoais',
-    value: 'dados_pessoais',
-    component: DadosPessoais
+    name: 'Dados da Clinica',
+    value: 'dados_clinica',
+    component: DadosClinica
   },
   {
     name: 'Endereço',
@@ -45,11 +46,11 @@ const progress = ref(0);
 
 const deletar = () => {
   loading.value = true
-  deletePaciente(props.paciente.id)
+  deleteClinica(props.clinica.id)
     .then(async () => {
       progress.value = 100
       await wait(500)
-      Inertia.visit('/pacientes')
+      Inertia.visit('/clinicas')
     })
     .catch(async (err) => {
       progress.value = 100
@@ -58,7 +59,7 @@ const deletar = () => {
 
       await wait(500)
 
-      error(err instanceof Error ? err.message : "Erro ao deletar paciente")
+      error(err instanceof Error ? err.message : "Erro ao deletar clinica")
 
     }).finally(() => {
       loading.value = false
@@ -70,7 +71,7 @@ const deletar = () => {
 
 <template>
 
-  <Head :title="props.paciente.nome" />
+  <Head :title="props.clinica.nome_fantasia" />
 
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="flex h-full flex-1 flex-col gap-4 p-4 overflow-x-auto">
@@ -83,17 +84,17 @@ const deletar = () => {
           </TabsTrigger>
         </TabsList>
         <TabsContent v-for="(tab, index) in tabList" :key="index" :value="tab.value" class="p-0">
-          <component :is="tab.component" :paciente="props.paciente" :endereco="props.paciente.enderecos"/>
+          <component :is="tab.component" :clinica="props.clinica" :enderecos="props.clinica.enderecos"/>
         </TabsContent>
       </Tabs>
 
       <div class="flex justify-between mt-auto">
-        <ConfirmAction title="Deseja realmente deletar esse paciente?" description="Essa ação não pode ser desfeita."
+        <ConfirmAction title="Deseja realmente deletar essa clinica?" description="Essa ação não pode ser desfeita."
           :onConfirm="deletar">
           <Button variant="destructive">Deletar</Button>
         </ConfirmAction>
         <Button variant="outline"
-          @click="() => { Inertia.visit(`/pacientes/editar/${props.paciente.id}`) }">Editar</Button>
+          @click="() => { Inertia.visit(`/clinicas/editar/${props.clinica.id}`) }">Editar</Button>
       </div>
     </div>
   </AppLayout>

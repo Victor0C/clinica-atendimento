@@ -13,8 +13,8 @@ import {
 } from "@tanstack/vue-table";
 import { computed, h, ref, watch } from "vue";
 
-import { PacienteInterface } from '@/Interfaces/Pacientes/PacienteInterface';
 import SearchInput from '@/components/Inputs/SearchInput.vue';
+import BarLoading from '@/components/Loading/BarLoading.vue';
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -25,26 +25,26 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useIsMobile } from '@/composables/useIsMobile';
+import { useToasts } from '@/composables/useToasts';
+import { ClinicaInterface } from '@/Interfaces/Clinicas/ClinicaInterface';
+import { SearchClinicaInterface } from '@/Interfaces/Clinicas/SearchClinicaInterface';
+import { getAllClinicas } from '@/Services/ClinicaServcie';
+import { wait } from '@/Utils';
 import type { Row } from "@tanstack/vue-table";
 import { Eye, Plus, Search } from 'lucide-vue-next';
-import BarLoading from '@/components/Loading/BarLoading.vue';
-import { getAllPacientes } from '@/Services/PacienteService';
-import { SearchPacienteInterface } from '@/Interfaces/Pacientes/SearchPacienteInterface';
-import { wait } from '@/Utils';
-import { useToasts } from '@/composables/useToasts';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: 'Pacientes',
-    href: '/paciente',
+    title: 'Clinicas',
+    href: '/clinicas',
   },
 ];
 const { isMobile } = useIsMobile();
 
-const props = defineProps<{ page: PacienteInterface[] }>();
+const props = defineProps<{ page: ClinicaInterface[] }>();
 
-const localPage = ref<PacienteInterface[]>([]);
+const localPage = ref<ClinicaInterface[]>([]);
 
 watch(
   () => props.page,
@@ -54,21 +54,21 @@ watch(
   { immediate: true }
 );
 
-const allColumns: ColumnDef<PacienteInterface>[] = [
+const allColumns: ColumnDef<ClinicaInterface>[] = [
   {
     accessorKey: 'id',
     header: "Identificador",
     cell: ({ row }) => h("div", { class: "capitalize" }, row.getValue("id")),
   },
   {
-    accessorKey: 'nome',
-    header: 'Nome',
-    cell: ({ row }) => h("div", {}, row.getValue("nome")),
+    accessorKey: 'nome_fantasia',
+    header: 'Nome Fantasia',
+    cell: ({ row }) => h("div", {}, row.getValue("nome_fantasia")),
   },
   {
-    accessorKey: 'cpf',
-    header: 'CPF',
-    cell: ({ row }) => h("div", {}, row.getValue('cpf'))
+    accessorKey: 'cnpj',
+    header: 'CNPJ',
+    cell: ({ row }) => h("div", {}, row.getValue('cnpj')),
   },
   {
     id: "actions",
@@ -77,36 +77,36 @@ const allColumns: ColumnDef<PacienteInterface>[] = [
       return h(
         'a',
         {
-          href: `/pacientes/detalhes/${row.getValue('id')}`,
+          href: `/clinicas/detalhes/${row.getValue('id')}`,
           class: 'text-[var(--primary)]',
-          title: 'Ver detal'
+          title: 'Ver detalhes'
         },
         [
           h(Eye),
         ]
       )
     },
-
   },
-]
+];
+
 
 const columns = computed(() => {
   if (isMobile.value) {
-    const nomeCol = allColumns.find(col => col.header === 'Nome');
+    const nomeCol = allColumns.find(col => col.header === 'Nome Fantasia');
     if (!nomeCol) return [];
 
     return [
       {
         ...nomeCol,
-        cell: ({ row }: { row: Row<PacienteInterface> }) =>
+        cell: ({ row }: { row: Row<ClinicaInterface> }) =>
           h(
             'a',
             {
-              href: `/pacientes/detalhes/${row.original.id}`,
+              href: `/clinicas/detalhes/${row.original.id}`,
               class: 'text-[var(--primary)]',
               title: 'Ver detalhes'
             },
-            [h('div', {}, row.original.nome)]
+            [h('div', {}, row.original.nome_fantasia)]
           )
       }
     ];
@@ -125,34 +125,35 @@ const table = computed(() =>
 
 const loading = ref(false);
 const progress = ref(0);
-const searchParams = ref<SearchPacienteInterface>({
+const searchParams = ref<SearchClinicaInterface>({
   page: 1,
   perPage: 15,
-  cpf: '',
-  name: '',
-  email: '',
+  cnpj: '',
+  razaoSocial: '',
+  nomeFantasia: '',
 });
 
 const searchValue = ref('');
 
-const isCPF = (value: string) => /^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/.test(value);
+const isCNPJ = (value: string) => /^\d{2}\.?\d{3}\.?\d{3}\/?\d{4}-?\d{2}$/.test(value);
+
 const isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
 watch(
   searchValue,
   (newValue) => {
-    searchParams.value.cpf = '';
-    searchParams.value.name = '';
-    searchParams.value.email = '';
+    searchParams.value.cnpj = '';
+    searchParams.value.razaoSocial = '';
+    searchParams.value.nomeFantasia = '';
 
     if (!newValue) return;
 
-    if (isCPF(newValue)) {
-      searchParams.value.cpf = newValue;
+    if (isCNPJ(newValue)) {
+      searchParams.value.cnpj = newValue;
     } else if (isEmail(newValue)) {
-      searchParams.value.email = newValue;
+      searchParams.value.nomeFantasia = newValue;
     } else {
-      searchParams.value.name = newValue;
+      searchParams.value.razaoSocial = newValue;
     }
 
     searchParams.value.page = 1;
@@ -161,7 +162,7 @@ watch(
 
 const search = () => {
   loading.value = true
-  getAllPacientes(searchParams.value)
+  getAllClinicas(searchParams.value)
     .then(async (newPage) => {
       progress.value = 100
       await wait(500)
@@ -174,7 +175,7 @@ const search = () => {
 
       await wait(500)
 
-      error(err instanceof Error ? err.message : "Erro ao buscar pacientes")
+      error(err instanceof Error ? err.message : "Erro ao buscar clinicas")
 
     }).finally(() => {
       loading.value = false
@@ -186,7 +187,7 @@ const search = () => {
 
 <template>
 
-  <Head title="Pacientes" />
+  <Head title="Clinicas" />
 
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="flex h-full flex-1 flex-col gap-4 p-4 overflow-x-auto">
@@ -200,10 +201,10 @@ const search = () => {
             <Search />
           </Button>
         </div>
-        <Link href="/pacientes/novo">
+        <Link href="/clinicas/novo">
 
         <Button class="sm:ml-auto">
-          <Plus /> Novo paciente
+          <Plus /> Nova clinica
         </Button>
         </Link>
       </div>

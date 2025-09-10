@@ -1,5 +1,5 @@
 import { PacienteInterface } from '@/Interfaces/Pacientes/PacienteInterface';
-import { SearchPacienteInterface } from '@/Interfaces/Pacientes/SearchPacienteInterfa';
+import { SearchPacienteInterface } from '@/Interfaces/Pacientes/SearchPacienteInterface';
 import api from './api';
 
 async function getAllPacientes(search: SearchPacienteInterface): Promise<PacienteInterface[]> {
