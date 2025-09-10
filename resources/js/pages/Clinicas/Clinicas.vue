@@ -61,9 +61,9 @@ const allColumns: ColumnDef<ClinicaInterface>[] = [
     cell: ({ row }) => h("div", { class: "capitalize" }, row.getValue("id")),
   },
   {
-    accessorKey: 'nomeFantasia',
+    accessorKey: 'nome_fantasia',
     header: 'Nome Fantasia',
-    cell: ({ row }) => h("div", {}, row.getValue("nomeFantasia")),
+    cell: ({ row }) => h("div", {}, row.getValue("nome_fantasia")),
   },
   {
     accessorKey: 'cnpj',
@@ -106,7 +106,7 @@ const columns = computed(() => {
               class: 'text-[var(--primary)]',
               title: 'Ver detalhes'
             },
-            [h('div', {}, row.original.nomeFantasia)]
+            [h('div', {}, row.original.nome_fantasia)]
           )
       }
     ];

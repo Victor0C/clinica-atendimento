@@ -2,8 +2,10 @@
 
 namespace App\Helpers;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 class VerifyUniquesHelper
 {
+  
   public static function verifyUniquesForCreate(
     string $modelClass,
     array $data,
@@ -52,8 +54,11 @@ class VerifyUniquesHelper
           $q->orWhere($key, $value);
         }
       }
-    })
-    ->withTrashed();
+    });
+
+    if (in_array(SoftDeletes::class, class_uses_recursive($modelClass))) {
+      $query->withTrashed();
+    }
 
     return $query;
   }

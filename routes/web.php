@@ -29,6 +29,12 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('clinicas')->group(function () {
         Route::get('/', [ClinicasController::class, 'getViewClinicas']);
+        Route::post('/', [ClinicasController::class, 'createClinicas']);
+        Route::get('/novo', [ClinicasController::class, 'getViewCreateClinica']);
+        Route::get('/editar/{id}', [ClinicasController::class, 'getViewEditarClinica']);
+        Route::put('/editar/{id}', [ClinicasController::class, 'editClinica']);
+        Route::get('/detalhes/{id}', [ClinicasController::class, 'getViewDetalhesClinicas']);
+        Route::delete('delete/{id}', [ClinicasController::class, 'deletarClinica']);
     });
 });
 

@@ -1,6 +1,5 @@
 import { ClinicaInterface } from '@/Interfaces/Clinicas/ClinicaInterface';
 import { SearchClinicaInterface } from '@/Interfaces/Clinicas/SearchClinicaInterface';
-import { PacienteInterface } from '@/Interfaces/Pacientes/PacienteInterface';
 import api from './api';
 
 async function getAllClinicas(search: SearchClinicaInterface): Promise<ClinicaInterface[]> {
@@ -18,33 +17,33 @@ async function getAllClinicas(search: SearchClinicaInterface): Promise<ClinicaIn
     }
 }
 
-async function createPaciente(paciente: PacienteInterface): Promise<PacienteInterface> {
+async function createClinica(clinica: ClinicaInterface): Promise<ClinicaInterface> {
     try {
-        const response = await api.post('/pacientes', paciente);
+        const response = await api.post('/clinicas', clinica);
         return response.data;
     } catch (error: any) {
-        const message = error.response?.data?.message || 'Erro ao criar paciente. Tente novamente.';
+        const message = error.response?.data?.message || 'Erro ao criar clinica. Tente novamente.';
         throw new Error(message);
     }
 }
 
-async function editarPaciente(paciente: PacienteInterface): Promise<PacienteInterface> {
+async function editarClinica(clinica: ClinicaInterface): Promise<ClinicaInterface> {
     try {
-        const response = await api.put(`/pacientes/editar/${paciente.id}`, paciente);
+        const response = await api.put(`/clinicas/editar/${clinica.id}`, clinica);
         return response.data;
     } catch (error: any) {
-        const message = error.response?.data?.message || 'Erro ao editar paciente. Tente novamente.';
+        const message = error.response?.data?.message || 'Erro ao editar clinica. Tente novamente.';
         throw new Error(message);
     }
 }
 
-async function deletePaciente(id: number): Promise<void> {
+async function deleteClinica(id: number): Promise<void> {
     try {
-        await api.delete(`/pacientes/delete/${id}`);
+        await api.delete(`/clinicas/delete/${id}`);
     } catch (error: any) {
-        const message = error.response?.data?.message || 'Erro ao deletar paciente. Tente novamente.';
+        const message = error.response?.data?.message || 'Erro ao deletar clinica. Tente novamente.';
         throw new Error(message);
     }
 }
 
-export { createPaciente, deletePaciente, editarPaciente, getAllClinicas };
+export { createClinica, deleteClinica, editarClinica, getAllClinicas };

@@ -2,14 +2,13 @@
 
 namespace App\DTOs\Clinicas;
 
-use App\DTOs\Pacientes\EnderecoDTO;
-use App\Traits\FromModel;
+use App\DTOs\Pacientes\CreateEnderecoDTO;
+use App\Traits\ToArrayTrait;
 
-class ClinicaDTO
+class CreateClinicaDTO
 {
-  use FromModel;
+  use ToArrayTrait;
 
-  public int $id;
   public string $nome_fantasia;
   public string $razao_social;
   public string $cnpj;
@@ -21,7 +20,6 @@ class ClinicaDTO
 
   public function __construct(array $data)
   {
-    $this->id = $data['id'];
     $this->nome_fantasia = $data['nome_fantasia'];
     $this->razao_social = $data['razao_social'];
     $this->cnpj = $data['cnpj'];
@@ -29,9 +27,10 @@ class ClinicaDTO
     $this->celular = $data['celular'];
     $this->email = $data['email'];
 
+
     if (isset($data['enderecos'])) {
       foreach ($data['enderecos'] as $endereco) {
-        $this->enderecos[] = new EnderecoDTO($endereco);
+        $this->enderecos[] = new CreateEnderecoDTO($endereco);
       }
     }
   }

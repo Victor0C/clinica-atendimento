@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Exceptions\Pacientes;
+namespace App\Exceptions\Clinicas;
 
 use Exception;
 
-class EmailAlreadyExistsException extends Exception
+class NotFoundClinicaException extends Exception
 {
-  protected $message = 'E-mail já em uso';
-  protected $code = 422;
+  protected $message = 'Clinica não encontrada.';
+  protected $code = 404;
 
   public function __construct($message = null, $code = null)
   {

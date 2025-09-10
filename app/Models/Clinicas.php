@@ -20,6 +20,7 @@ class Clinicas extends Model
 
     public function enderecos(): BelongsToMany
     {
-        return $this->belongsToMany(Endereco::class, 'endereco_clinica', 'clinica_id', 'endereco_id');
+        return $this->belongsToMany(Endereco::class, 'endereco_clinica', 'clinica_id', 'endereco_id')->withTimestamps();
     }
+
 }
