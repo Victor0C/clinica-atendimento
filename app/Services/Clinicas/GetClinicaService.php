@@ -13,7 +13,7 @@ class GetClinicaService implements GetClinicaServiceInterface
   public function fire(int $id): Clinica
   {
 
-    $clinica = Clinica::with(['enderecos'])->find($id);
+    $clinica = Clinica::with(['enderecos', 'procedimentos.especialidade'])->find($id);
 
     if (!$clinica) {
       throw new NotFoundClinicaException();

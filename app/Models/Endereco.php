@@ -9,7 +9,6 @@ class Endereco extends Model
     protected $table = 'enderecos';
     
     protected $fillable = [
-        'paciente_id',
         'logradouro',
         'numero',
         'complemento',
