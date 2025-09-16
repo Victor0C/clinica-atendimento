@@ -11,6 +11,10 @@ use App\Interfaces\Clinicas\CreateClinicaServiceInterface;
 use App\Interfaces\Clinicas\DeleteClinicaServiceInterface;
 use App\Interfaces\Clinicas\EditClinicaServiceInterface;
 use App\Interfaces\Clinicas\GetClinicaServiceInterface;
+use App\DTOs\Clinicas\ClinicaWithProcedimentosDTO;
+use App\Exceptions\Clinicas\NotFoundClinicaException;
+use App\Models\Clinicas;
+use App\Services\Procedimentos\ProcedimentosService;
 
 class ClinicasService implements ClinicasServiceInterface
 {
@@ -43,5 +47,39 @@ class ClinicasService implements ClinicasServiceInterface
   {
     $service = app()->make(DeleteClinicaServiceInterface::class);
     $service->fire($id);
+  }
+
+  public function addProcedimentos(int $id, int $procedimentoId, int $preco): ClinicaWithProcedimentosDTO
+  {
+    $clinica = Clinicas::with(['enderecos'])->find($id);
+
+    if (!$clinica) {
+      throw new NotFoundClinicaException();
+    }
+
+    $procedimentoService = app()->make(ProcedimentosService::class);
+    $procedimento = $procedimentoService->get($procedimentoId);
+
+    $clinica->procedimentos()->attach([$procedimento->id => ['preco' => $preco]]);
+    $clinica->load('procedimentos');
+
+    return ClinicaWithProcedimentosDTO::fromModel($clinica);
+  }
+
+  public function removeProcedimentos(int $id, int $procedimentoId): ClinicaWithProcedimentosDTO
+  {
+    $clinica = Clinicas::with(['enderecos'])->find($id);
+
+    if (!$clinica) {
+      throw new NotFoundClinicaException();
+    }
+
+    $procedimentoService = app()->make(ProcedimentosService::class);
+    $procedimento = $procedimentoService->get($procedimentoId);
+
+    $clinica->procedimentos()->detach([$procedimento->id]);
+    $clinica->load('procedimentos.especialidade');
+
+    return ClinicaWithProcedimentosDTO::fromModel($clinica);
   }
 }

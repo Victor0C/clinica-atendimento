@@ -23,4 +23,10 @@ class Clinicas extends Model
         return $this->belongsToMany(Endereco::class, 'endereco_clinica', 'clinica_id', 'endereco_id')->withTimestamps();
     }
 
+    public function procedimentos(): BelongsToMany
+    {
+        return $this->belongsToMany(Procedimentos::class, 'procedimento_clinica', 'clinica_id', 'procedimento_id')
+            ->withPivot('preco')
+            ->withTimestamps();
+    }
 }

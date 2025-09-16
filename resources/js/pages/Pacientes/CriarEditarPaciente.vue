@@ -69,11 +69,11 @@ const formSchema = toTypedSchema(z.object({
   id: z.number(),
   nome: z.string().min(1, "O nome é obrigatório").max(255),
   data_nascimento: z.string().min(1, "Data de nascimento é obrigatória"),
-  cpf: z.string().length(14, "CPF deve ter 14 caracteres"),
+  cpf: z.string().length(11, "CPF deve ter 11 caracteres"),
   rg: z.string().min(1, "RG é obrigatório").max(20),
   sexo: z.enum(["M", "F", "O"], { errorMap: () => ({ message: "Sexo inválido" }) }),
-  telefone_fixo: z.string().max(15).optional().nullable(),
-  celular: z.string().min(1, "Celular é obrigatório").max(15),
+  telefone_fixo: z.string().max(10).optional().nullable(),
+  celular: z.string().min(1, "Celular é obrigatório").max(11),
   email: z.string().email("E-mail inválido").max(255),
   convenio: z.string().max(50).optional().nullable(),
   numero_carteirinha: z.string().max(30).optional().nullable(),
@@ -88,7 +88,7 @@ const formSchema = toTypedSchema(z.object({
     bairro: z.string().min(1, "Bairro é obrigatório").max(255),
     cidade: z.string().min(1, "Cidade é obrigatória").max(255),
     estado: z.string().length(2, "Estado deve ter 2 caracteres"),
-    cep: z.string().length(9, "CEP deve ter 9 caracteres"),
+    cep: z.string().length(8, "CEP deve ter 8 caracteres"),
   }))
 }))
 

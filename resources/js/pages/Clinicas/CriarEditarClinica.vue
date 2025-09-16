@@ -71,16 +71,16 @@ const formSchema = toTypedSchema(
       .max(255, "Razão social deve ter no máximo 255 caracteres"),
 
     cnpj: z.string()
-      .length(18, "CNPJ deve ter 18 caracteres (formato 00.000.000/0000-00)"),
+      .length(14, "CNPJ deve ter 14 caracteres"),
 
     telefone_fixo: z.string()
-      .max(15, "Telefone fixo deve ter no máximo 15 caracteres")
+      .max(10, "Telefone fixo deve ter no máximo 10 caracteres")
       .optional()
       .nullable(),
 
     celular: z.string()
       .min(1, "Celular é obrigatório")
-      .max(15, "Celular deve ter no máximo 15 caracteres"),
+      .max(11, "Celular deve ter no máximo 11 caracteres"),
 
     email: z.string()
       .email("E-mail inválido")
@@ -115,7 +115,7 @@ const formSchema = toTypedSchema(
           .length(2, "Estado deve ter 2 caracteres (ex: SP, RJ)"),
 
         cep: z.string()
-          .length(9, "CEP deve ter 9 caracteres (formato 00000-000)"),
+          .length(8, "CEP deve ter 8 caracteres"),
       })
     )
   })
@@ -224,7 +224,7 @@ const onSubmit = form.handleSubmit((values) => {
             <FormItem>
               <FormLabel>Telefone fixo</FormLabel>
               <FormControl>
-                <Input type="text" placeholder="(00) 0000-0000" v-bind="componentField" />
+                <Input type="text" placeholder="0000000000" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -234,7 +234,7 @@ const onSubmit = form.handleSubmit((values) => {
             <FormItem>
               <FormLabel>Celular</FormLabel>
               <FormControl>
-                <Input type="text" placeholder="(00) 00000-0000" v-bind="componentField" />
+                <Input type="text" placeholder="00000000000" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -265,7 +265,7 @@ const onSubmit = form.handleSubmit((values) => {
             <FormItem>
               <FormLabel>CEP</FormLabel>
               <FormControl>
-                <Input type="text" placeholder="00000-000" v-bind="componentField" />
+                <Input type="text" placeholder="00000000" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>

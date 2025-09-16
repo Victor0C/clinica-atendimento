@@ -11,9 +11,9 @@ class EditClinicaRequest extends FormRequest
         return [
             'nome_fantasia' => 'sometimes|string',
             'razao_social' => 'sometimes|string',
-            'cnpj' => 'sometimes|string|size:18',
-            'telefone_fixo' => 'sometimes|nullable|string|max:15',
-            'celular' => 'sometimes|string|max:15',
+            'cnpj' => 'sometimes|string|size:14',
+            'telefone_fixo' => 'sometimes|nullable|string|max:10',
+            'celular' => 'sometimes|string|max:11',
             'email' => 'sometimes|email|max:255',
 
             'enderecos' => 'sometimes|array',
@@ -25,7 +25,7 @@ class EditClinicaRequest extends FormRequest
             'enderecos.*.bairro' => 'sometimes|string|max:255',
             'enderecos.*.cidade' => 'sometimes|string|max:255',
             'enderecos.*.estado' => 'sometimes|string|size:2',
-            'enderecos.*.cep' => 'sometimes|string|size:9'
+            'enderecos.*.cep' => 'sometimes|string|size:8'
         ];
     }
 }
