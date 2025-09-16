@@ -2,9 +2,9 @@
 
 namespace App\Interfaces\Paciente;
 
-use App\DTOs\Pacientes\PacienteDTO;
+use App\Models\Paciente;
 
 interface EditPacienteServiceInterface
 {
-    public function fire(int $id, array $data): PacienteDTO;
+    public function fire(int $id, array $data): Paciente;
 }

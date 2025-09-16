@@ -11,7 +11,7 @@ class GetClinicaService implements GetClinicaServiceInterface
 {
 
 
-  public function fire(int $id): ClinicaDTO
+  public function fire(int $id): Clinicas
   {
 
     $clinica = Clinicas::with(['enderecos'])->find($id);
@@ -20,6 +20,6 @@ class GetClinicaService implements GetClinicaServiceInterface
       throw new NotFoundClinicaException();
     }
 
-    return new ClinicaDTO($clinica->toArray());
+    return $clinica;
   }
 }

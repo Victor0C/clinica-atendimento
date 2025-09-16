@@ -15,29 +15,30 @@ use App\DTOs\Clinicas\ClinicaWithProcedimentosDTO;
 use App\Exceptions\Clinicas\NotFoundClinicaException;
 use App\Models\Clinicas;
 use App\Services\Procedimentos\ProcedimentosService;
+use Illuminate\Database\Eloquent\Collection;
 
 class ClinicasService implements ClinicasServiceInterface
 {
 
-  public function getAll(int $page, int $perPage = 20, ?SearchGetAllClinicasDTO $searchDTO = null): array
+  public function getAll(int $page, int $perPage = 20, ?SearchGetAllClinicasDTO $searchDTO = null): Collection 
   {
     $service = app()->make(GetAllClinicasServiceInterface::class);
     return $service->fire($page, $perPage, $searchDTO);
   }
 
-  public function get(int $id): ClinicaDTO
+  public function get(int $id): Clinicas
   {
     $service = app()->make(GetClinicaServiceInterface::class);
     return $service->fire($id);
   }
 
-  public function create(CreateClinicaDTO $dto): ClinicaDTO
+  public function create(CreateClinicaDTO $dto): Clinicas
   {
     $service = app()->make(CreateClinicaServiceInterface::class);
     return $service->fire($dto);
   }
 
-  public function edit(int $id, array $data): ClinicaDTO
+  public function edit(int $id, array $data): Clinicas
   {
     $service = app()->make(EditClinicaServiceInterface::class);
     return $service->fire($id, $data);
@@ -49,7 +50,7 @@ class ClinicasService implements ClinicasServiceInterface
     $service->fire($id);
   }
 
-  public function addProcedimentos(int $id, int $procedimentoId, int $preco): ClinicaWithProcedimentosDTO
+  public function addProcedimentos(int $id, int $procedimentoId, int $preco): Clinicas
   {
     $clinica = Clinicas::with(['enderecos'])->find($id);
 
@@ -63,10 +64,10 @@ class ClinicasService implements ClinicasServiceInterface
     $clinica->procedimentos()->attach([$procedimento->id => ['preco' => $preco]]);
     $clinica->load('procedimentos');
 
-    return ClinicaWithProcedimentosDTO::fromModel($clinica);
+    return $clinica;
   }
 
-  public function removeProcedimentos(int $id, int $procedimentoId): ClinicaWithProcedimentosDTO
+  public function removeProcedimentos(int $id, int $procedimentoId): Clinicas
   {
     $clinica = Clinicas::with(['enderecos'])->find($id);
 
@@ -80,6 +81,6 @@ class ClinicasService implements ClinicasServiceInterface
     $clinica->procedimentos()->detach([$procedimento->id]);
     $clinica->load('procedimentos.especialidade');
 
-    return ClinicaWithProcedimentosDTO::fromModel($clinica);
+    return $clinica;
   }
 }

@@ -18,7 +18,7 @@ use App\Models\Paciente;
 class CreatePacienteService implements CreatePacienteServiceInterface
 {
 
-  public function fire(CreatePacienteDTO $dto): PacienteDTO
+  public function fire(CreatePacienteDTO $dto): Paciente
   {
     $arrayDTO = $dto->toArray();
     
@@ -40,10 +40,9 @@ class CreatePacienteService implements CreatePacienteServiceInterface
     foreach ($dto->enderecos as $enderecoDTO) {
       $endereco = Endereco::create($enderecoDTO->toArray());
       $paciente->enderecos()->attach($endereco->id);
-      $pacienteDto->enderecos[] = new EnderecoDTO($endereco->toArray());
     }
 
 
-    return $pacienteDto;
+    return $paciente;
   }
 }

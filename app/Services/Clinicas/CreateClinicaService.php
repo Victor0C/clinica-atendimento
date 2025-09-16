@@ -16,7 +16,7 @@ use App\Models\Endereco;
 class CreateClinicaService implements CreateClinicaServiceInterface
 {
 
-  public function fire(CreateClinicaDTO $dto): ClinicaDTO
+  public function fire(CreateClinicaDTO $dto): Clinicas
   {
     $arrayDTO = $dto->toArray();
 
@@ -33,14 +33,11 @@ class CreateClinicaService implements CreateClinicaServiceInterface
 
     $clinica = Clinicas::create($arrayDTO);
 
-    $clinicaDto = new ClinicaDTO($clinica->toArray());
-
     foreach ($dto->enderecos as $enderecoDTO) {
       $endereco = Endereco::create($enderecoDTO->toArray());
       $clinica->enderecos()->attach($endereco->id);
-      $clinicaDto->enderecos[] = new EnderecoDTO($endereco->toArray());
     }
 
-    return $clinicaDto;
+    return $clinica;
   }
 }

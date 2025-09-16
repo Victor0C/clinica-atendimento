@@ -18,7 +18,7 @@ class EditPacienteService implements EditPacienteServiceInterface
   public function __construct(private PacienteServiceInterface $_PACIENTE_SERVICE) {}
 
 
-  public function fire(int $id, array $data): PacienteDTO
+  public function fire(int $id, array $data): Paciente
   {
     $paciente = Paciente::with('enderecos')->find($id);
 
@@ -51,6 +51,6 @@ class EditPacienteService implements EditPacienteServiceInterface
       }
     }
 
-    return PacienteDTO::fromModel($paciente);
+    return $paciente;
   }
 }

@@ -11,24 +11,26 @@ use App\Interfaces\Paciente\EditPacienteServiceInterface;
 use App\Interfaces\Paciente\GetAllPacienteServiceInterface;
 use App\Interfaces\Paciente\GetPacienteServiceInterface;
 use App\Interfaces\Paciente\PacienteServiceInterface;
+use App\Models\Paciente;
+use Illuminate\Database\Eloquent\Collection;
 
 class PacienteService implements PacienteServiceInterface
 {
-  public function create(CreatePacienteDTO $dto): PacienteDTO
+  public function create(CreatePacienteDTO $dto): Paciente
   {
     $service = app()->make(CreatePacienteServiceInterface::class);
 
     return $service->fire($dto);
   }
 
-  public function get(int $id): PacienteDTO
+  public function get(int $id): Paciente
   {
     $service = app()->make(GetPacienteServiceInterface::class);
 
     return $service->fire($id);
   }
 
-  public function getAll(int $page, int $perPage = 20, ?SearchGetAllPacientesDTO $searchDTO = null): array
+  public function getAll(int $page, int $perPage = 20, ?SearchGetAllPacientesDTO $searchDTO = null): Collection
   {
     $service = app()->make(GetAllPacienteServiceInterface::class);
     return $service->fire($page, $perPage, $searchDTO);
@@ -40,7 +42,7 @@ class PacienteService implements PacienteServiceInterface
     $service->fire($id);
   }
 
-  public function edit(int $id, array $data): PacienteDTO
+  public function edit(int $id, array $data): Paciente
   {
     $service = app()->make(EditPacienteServiceInterface::class);
     return $service->fire($id, $data);

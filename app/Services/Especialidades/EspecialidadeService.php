@@ -10,7 +10,7 @@ use App\Models\Especialidades;
 
 class EspecialidadeService implements EspecialidadeServiceInterface
 {
-  public function get($id): EspecialidadeDTO
+  public function get($id): Especialidades
   {
     $especialidade = Especialidades::find($id);
 
@@ -18,7 +18,7 @@ class EspecialidadeService implements EspecialidadeServiceInterface
       throw new NotFoundEspecialidadeException();
     }
 
-    return new EspecialidadeDTO($especialidade->toArray());
+    return $especialidade;
   }
 
   public function getAll(int $page, int $perPage = 20, ?SearchGetAllEspecialidadesDTO $searchDTO = null): array
@@ -32,8 +32,6 @@ class EspecialidadeService implements EspecialidadeServiceInterface
       }
     }
 
-    return $query->get()->map(function ($paciente) {
-      return new EspecialidadeDTO($paciente->toArray());
-    })->toArray();
+    return $query->get();
   }
 }

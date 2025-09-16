@@ -10,7 +10,7 @@ use App\Models\Procedimentos;
 class ProcedimentosService implements ProcedimentosServiceInterface
 {
 
-  public function get(int $id): ProcedimentoDTO
+  public function get(int $id): Procedimentos
   {
     $procedimento = Procedimentos::find($id);
 
@@ -18,6 +18,6 @@ class ProcedimentosService implements ProcedimentosServiceInterface
       throw new NotFoundProcedimentoException();
     }
 
-    return new ProcedimentoDTO($procedimento->toArray());
+    return $procedimento;
   }
 }

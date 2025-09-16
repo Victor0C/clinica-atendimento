@@ -2,9 +2,9 @@
 
 namespace App\Interfaces\Procedimentos;
 
-use App\DTOs\Procedimentos\ProcedimentoDTO;
+use App\Models\Procedimentos;
 
 interface ProcedimentosServiceInterface
 {
-  public function get(int $id): ProcedimentoDTO;
+  public function get(int $id): Procedimentos;
 }

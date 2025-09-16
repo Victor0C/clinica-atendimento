@@ -15,7 +15,7 @@ class EditClinicaService implements EditClinicaServiceInterface
 {
 
 
-  public function fire(int $id, array $data): ClinicaDTO
+  public function fire(int $id, array $data): Clinicas
   {
     $clinica = Clinicas::with('enderecos')->find($id);
 
@@ -48,6 +48,6 @@ class EditClinicaService implements EditClinicaServiceInterface
       }
     }
 
-    return ClinicaDTO::fromModel($clinica);
+    return $clinica;
   }
 }
