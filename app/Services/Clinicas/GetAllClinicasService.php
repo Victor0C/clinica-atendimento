@@ -6,7 +6,7 @@ use App\DTOs\Clinicas\ClinicaDTO;
 use App\DTOs\Clinicas\SearchGetAllClinicasDTO;
 use App\Interfaces\Clinicas\GetAllClinicasServiceInterface;
 
-use App\Models\Clinicas;
+use App\Models\Clinica;
 use Illuminate\Database\Eloquent\Collection;
 
 class GetAllClinicasService implements GetAllClinicasServiceInterface
@@ -15,7 +15,7 @@ class GetAllClinicasService implements GetAllClinicasServiceInterface
 
   public function fire(int $page, int $perPage = 20, ?SearchGetAllClinicasDTO $searchDTO = null): Collection
   {
-    $query = Clinicas::with(['enderecos'])
+    $query = Clinica::with(['enderecos'])
       ->forPage($page, $perPage);
 
     if ($searchDTO) {

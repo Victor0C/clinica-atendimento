@@ -3,7 +3,7 @@
 namespace App\DTOs\Clinicas;
 
 use App\DTOs\Procedimentos\ProcedimentoDTO;
-use App\Models\Procedimentos;
+use App\Models\Procedimento;
 use App\Traits\FromModel;
 
 class ClinicaWithProcedimentosDTO extends ClinicaDTO

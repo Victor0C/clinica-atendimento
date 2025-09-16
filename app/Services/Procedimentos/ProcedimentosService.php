@@ -5,14 +5,14 @@ namespace App\Services\Procedimentos;
 use App\Interfaces\Procedimentos\ProcedimentosServiceInterface;
 use App\DTOs\Procedimentos\ProcedimentoDTO;
 use App\Exceptions\Procedimentos\NotFoundProcedimentoException;
-use App\Models\Procedimentos;
+use App\Models\Procedimento;
 
 class ProcedimentosService implements ProcedimentosServiceInterface
 {
 
-  public function get(int $id): Procedimentos
+  public function get(int $id): Procedimento
   {
-    $procedimento = Procedimentos::find($id);
+    $procedimento = Procedimento::find($id);
 
     if (!$procedimento) {
       throw new NotFoundProcedimentoException();

@@ -2,9 +2,9 @@
 
 namespace App\Interfaces\Clinicas;
 
-use App\Models\Clinicas;
+use App\Models\Clinica;
 
 interface GetClinicaServiceInterface
 {
-  public function fire(int $id): Clinicas;
+  public function fire(int $id): Clinica;
 }

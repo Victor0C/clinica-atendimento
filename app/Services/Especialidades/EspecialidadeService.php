@@ -6,13 +6,13 @@ use App\Interfaces\Especialidades\EspecialidadeServiceInterface;
 use App\DTOs\Especialidades\EspecialidadeDTO;
 use App\DTOs\Especialidades\SearchGetAllEspecialidadesDTO;
 use App\Exceptions\Especialidades\NotFoundEspecialidadeException;
-use App\Models\Especialidades;
+use App\Models\Especialidade;
 
 class EspecialidadeService implements EspecialidadeServiceInterface
 {
-  public function get($id): Especialidades
+  public function get($id): Especialidade
   {
-    $especialidade = Especialidades::find($id);
+    $especialidade = Especialidade::find($id);
 
     if (!$especialidade) {
       throw new NotFoundEspecialidadeException();
@@ -23,7 +23,7 @@ class EspecialidadeService implements EspecialidadeServiceInterface
 
   public function getAll(int $page, int $perPage = 20, ?SearchGetAllEspecialidadesDTO $searchDTO = null): array
   {
-    $query = Especialidades::forPage($page, $perPage);
+    $query = Especialidade::forPage($page, $perPage);
 
     if ($searchDTO) {
 

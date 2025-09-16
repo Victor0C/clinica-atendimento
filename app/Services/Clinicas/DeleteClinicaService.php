@@ -4,7 +4,7 @@ namespace App\Services\Clinicas;
 
 use App\Exceptions\Clinicas\NotFoundClinicaException;
 use App\Interfaces\Clinicas\DeleteClinicaServiceInterface;
-use App\Models\Clinicas;
+use App\Models\Clinica;
 
 class DeleteClinicaService implements DeleteClinicaServiceInterface
 {
@@ -12,7 +12,7 @@ class DeleteClinicaService implements DeleteClinicaServiceInterface
   public function fire(int $id): void
   {
 
-    $clinica = Clinicas::find($id);
+    $clinica = Clinica::find($id);
 
     if (!$clinica) {
       throw new NotFoundClinicaException();

@@ -4,10 +4,10 @@ namespace App\Interfaces\Especialidades;
 
 use App\DTOs\Especialidades\EspecialidadeDTO;
 use App\DTOs\Especialidades\SearchGetAllEspecialidadesDTO;
-use App\Models\Especialidades;
+use App\Models\Especialidade;
 
 interface EspecialidadeServiceInterface
 {
-    public function get($id): Especialidades;
+    public function get($id): Especialidade;
     public function getAll(int $page, int $perPage = 20, ?SearchGetAllEspecialidadesDTO $searchDTO = null): array;
 }

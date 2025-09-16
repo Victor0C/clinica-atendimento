@@ -10,18 +10,18 @@ use App\Exceptions\Clinicas\CNPJClinicaAlreadyUsedException;
 use App\Exceptions\Clinicas\RazaoSocialClinicaAlreadyUsedException;
 use App\Exceptions\Pacientes\EmailAlreadyExistsException;
 use App\Helpers\VerifyUniquesHelper;
-use App\Models\Clinicas;
+use App\Models\Clinica;
 use App\Models\Endereco;
 
 class CreateClinicaService implements CreateClinicaServiceInterface
 {
 
-  public function fire(CreateClinicaDTO $dto): Clinicas
+  public function fire(CreateClinicaDTO $dto): Clinica
   {
     $arrayDTO = $dto->toArray();
 
     VerifyUniquesHelper::verifyUniquesForCreate(
-      Clinicas::class,
+      Clinica::class,
       $arrayDTO,
       ['cnpj', 'razao_social', 'email'],
       [
@@ -31,7 +31,7 @@ class CreateClinicaService implements CreateClinicaServiceInterface
       ]
     );
 
-    $clinica = Clinicas::create($arrayDTO);
+    $clinica = Clinica::create($arrayDTO);
 
     foreach ($dto->enderecos as $enderecoDTO) {
       $endereco = Endereco::create($enderecoDTO->toArray());

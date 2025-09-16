@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Clinicas extends Model
+class Clinica extends Model
 {
     protected $table = 'clinicas';
 
@@ -25,7 +25,7 @@ class Clinicas extends Model
 
     public function procedimentos(): BelongsToMany
     {
-        return $this->belongsToMany(Procedimentos::class, 'procedimento_clinica', 'clinica_id', 'procedimento_id')
+        return $this->belongsToMany(Procedimento::class, 'procedimento_clinica', 'clinica_id', 'procedimento_id')
             ->withPivot('preco')
             ->withTimestamps();
     }

@@ -13,32 +13,32 @@ use App\Interfaces\Clinicas\EditClinicaServiceInterface;
 use App\Interfaces\Clinicas\GetClinicaServiceInterface;
 use App\DTOs\Clinicas\ClinicaWithProcedimentosDTO;
 use App\Exceptions\Clinicas\NotFoundClinicaException;
-use App\Models\Clinicas;
+use App\Models\Clinica;
 use App\Services\Procedimentos\ProcedimentosService;
 use Illuminate\Database\Eloquent\Collection;
 
 class ClinicasService implements ClinicasServiceInterface
 {
 
-  public function getAll(int $page, int $perPage = 20, ?SearchGetAllClinicasDTO $searchDTO = null): Collection 
+  public function getAll(int $page, int $perPage = 20, ?SearchGetAllClinicasDTO $searchDTO = null): Collection
   {
     $service = app()->make(GetAllClinicasServiceInterface::class);
     return $service->fire($page, $perPage, $searchDTO);
   }
 
-  public function get(int $id): Clinicas
+  public function get(int $id): Clinica
   {
     $service = app()->make(GetClinicaServiceInterface::class);
     return $service->fire($id);
   }
 
-  public function create(CreateClinicaDTO $dto): Clinicas
+  public function create(CreateClinicaDTO $dto): Clinica
   {
     $service = app()->make(CreateClinicaServiceInterface::class);
     return $service->fire($dto);
   }
 
-  public function edit(int $id, array $data): Clinicas
+  public function edit(int $id, array $data): Clinica
   {
     $service = app()->make(EditClinicaServiceInterface::class);
     return $service->fire($id, $data);
@@ -50,9 +50,9 @@ class ClinicasService implements ClinicasServiceInterface
     $service->fire($id);
   }
 
-  public function addProcedimentos(int $id, int $procedimentoId, int $preco): Clinicas
+  public function addProcedimentos(int $id, int $procedimentoId, int $preco): Clinica
   {
-    $clinica = Clinicas::with(['enderecos'])->find($id);
+    $clinica = Clinica::with(['enderecos'])->find($id);
 
     if (!$clinica) {
       throw new NotFoundClinicaException();
@@ -67,9 +67,9 @@ class ClinicasService implements ClinicasServiceInterface
     return $clinica;
   }
 
-  public function removeProcedimentos(int $id, int $procedimentoId): Clinicas
+  public function removeProcedimentos(int $id, int $procedimentoId): Clinica
   {
-    $clinica = Clinicas::with(['enderecos'])->find($id);
+    $clinica = Clinica::with(['enderecos'])->find($id);
 
     if (!$clinica) {
       throw new NotFoundClinicaException();

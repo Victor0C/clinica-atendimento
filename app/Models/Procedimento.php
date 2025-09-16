@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 
-class Procedimentos extends Model
+class Procedimento extends Model
 {
     protected $table = 'procedimentos';
 
     public function especialidade()
     {
-        return $this->belongsTo(Especialidades::class, 'especialidade_id', 'id');
+        return $this->belongsTo(Especialidade::class, 'especialidade_id', 'id');
     }
 }

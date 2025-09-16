@@ -30,18 +30,18 @@ class ClinicasController extends Controller
       return response()->json($pageData);
     }
 
-    return Inertia::render('Clinicas/Clinicas')->with(['page' => $pageData]);
+    return Inertia::render('Clinica/Clinica')->with(['page' => $pageData]);
   }
 
   public function getViewCreateClinica()
   {
-    return Inertia::render('Clinicas/CriarEditarClinica');
+    return Inertia::render('Clinica/CriarEditarClinica');
   }
 
   public function getViewEditarClinica($id, ClinicasServiceInterface $service)
   {
     try {
-      return Inertia::render('Clinicas/CriarEditarClinica')->with(['clinica' => $service->get($id)]);
+      return Inertia::render('Clinica/CriarEditarClinica')->with(['clinica' => $service->get($id)]);
     } catch (\Throwable $e) {
       return RequestHelper::onError($e);
     }
@@ -59,7 +59,7 @@ class ClinicasController extends Controller
   public function getViewDetalhesClinicas($id, ClinicasServiceInterface $service)
   {
     try {
-      return Inertia::render('Clinicas/DetalhesClinica/DetalhesClinica')->with(['clinica' => $service->get($id)]);
+      return Inertia::render('Clinica/DetalhesClinica/DetalhesClinica')->with(['clinica' => $service->get($id)]);
     } catch (\Throwable $e) {
       return RequestHelper::onError($e);
     }

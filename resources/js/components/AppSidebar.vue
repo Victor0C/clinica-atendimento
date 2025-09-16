@@ -15,7 +15,7 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Clinicas',
+        title: 'Clinica',
         href: '/clinicas',
         icon: HousePlus,
     },

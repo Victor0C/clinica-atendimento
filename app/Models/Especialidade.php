@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Especialidades extends Model
+class Especialidade extends Model
 {
     protected $table = 'especialidades';
     protected $fillable = [
