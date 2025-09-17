@@ -6,6 +6,7 @@ use App\DTOs\Clinicas\CreateClinicaDTO;
 use App\DTOs\Clinicas\SearchGetAllClinicasDTO;
 use App\Enums\Pacientes\GetAllEnum;
 use App\Helpers\RequestHelper;
+use App\Http\Requests\AddProcedimentoRequest;
 use App\Http\Requests\CreateClinicaRequest;
 use App\Http\Requests\EditClinicaRequest;
 use App\Http\Resources\ClinicaResource;
@@ -85,5 +86,22 @@ class ClinicasController extends Controller
     }
   }
 
+  public function addProcedimentos(AddProcedimentoRequest $request, $clinica_id, $procedimento_id, ClinicasServiceInterface $service)
+  {
+    try {
+      return response()->json(new ClinicaResource($service->addProcedimento($clinica_id, $procedimento_id, $request->validated()['preco'])), 201);
+    } catch (\Throwable $e) {
+      return RequestHelper::onError($e);
+    }
+  }
 
+  public function removeProcedimentos($clinica_id, $procedimento_id, ClinicasServiceInterface $service)
+  {
+    try {
+      $service->removeProcedimento($clinica_id, $procedimento_id);
+      return response()->noContent();
+    } catch (\Throwable $e) {
+      return RequestHelper::onError($e);
+    }
+  }
 }

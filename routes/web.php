@@ -30,6 +30,8 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('clinicas')->group(function () {
         Route::get('/', [ClinicasController::class, 'getViewClinicas']);
         Route::post('/', [ClinicasController::class, 'createClinicas']);
+        Route::post('{clinica_id}/procedimentos/{procedimento_id}', [ClinicasController::class, 'addProcedimentos']);
+        Route::delete('{clinica_id}/procedimentos/{procedimento_id}', [ClinicasController::class, 'removeProcedimentos']);
         Route::get('/novo', [ClinicasController::class, 'getViewCreateClinica']);
         Route::get('/editar/{id}', [ClinicasController::class, 'getViewEditarClinica']);
         Route::put('/editar/{id}', [ClinicasController::class, 'editClinica']);

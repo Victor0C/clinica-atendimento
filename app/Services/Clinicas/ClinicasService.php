@@ -50,7 +50,7 @@ class ClinicasService implements ClinicasServiceInterface
     $service->fire($id);
   }
 
-  public function addProcedimentos(int $id, int $procedimentoId, int $preco): Clinica
+  public function addProcedimento(int $id, int $procedimentoId, int $preco): Clinica
   {
     $clinica = Clinica::with(['enderecos'])->find($id);
 
@@ -67,20 +67,14 @@ class ClinicasService implements ClinicasServiceInterface
     return $clinica;
   }
 
-  public function removeProcedimentos(int $id, int $procedimentoId): Clinica
+  public function removeProcedimento(int $id, int $procedimentoId): void
   {
-    $clinica = Clinica::with(['enderecos'])->find($id);
+    $clinica = Clinica::find($id);
 
     if (!$clinica) {
       throw new NotFoundClinicaException();
     }
 
-    $procedimentoService = app()->make(ProcedimentosService::class);
-    $procedimento = $procedimentoService->get($procedimentoId);
-
-    $clinica->procedimentos()->detach([$procedimento->id]);
-    $clinica->load('procedimentos.especialidade');
-
-    return $clinica;
+    $clinica->procedimentos()->detach([$procedimentoId]);
   }
 }

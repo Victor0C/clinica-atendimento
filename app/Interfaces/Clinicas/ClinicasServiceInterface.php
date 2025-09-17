@@ -14,6 +14,6 @@ interface ClinicasServiceInterface
   public function create(CreateClinicaDTO $dto): Clinica;
   public function edit(int $id, array $data): Clinica;
   public function delete(int $id): void;
-  public function addProcedimentos(int $id, int $procedimentoId, int $preco): Clinica;
-  public function removeProcedimentos(int $id, int $procedimentoId): Clinica;
+  public function addProcedimento(int $id, int $procedimentoId, int $preco): Clinica;
+  public function removeProcedimento(int $id, int $procedimentoId): void;
 }
