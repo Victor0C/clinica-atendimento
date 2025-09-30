@@ -11,7 +11,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import DadosEndereco from '@/pages/Pacientes/DetalhesPaciente/TabsContents/DadosEndereco.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Inertia } from '@inertiajs/inertia';
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import DadosClinica from './TabsContents/DadosClinica.vue';
 import ProcedimentosClinica from './TabsContents/ProcedimentosClinica.vue';
@@ -27,6 +27,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: '/clinicas',
   },
 ];
+
 
 const tabList = [
   {
@@ -46,6 +47,9 @@ const tabList = [
   },
 ]
 
+const page = usePage();
+const searchParams = new URLSearchParams(page.url.split('?')[1] || '');
+const currentTab = ref(searchParams.get('tab') || tabList[0].value);
 const loading = ref(false);
 const progress = ref(0);
 
@@ -73,6 +77,13 @@ const deletar = () => {
     });
 };
 
+const onChangeTab = (newTab: string) => {
+  currentTab.value = newTab;
+
+  const url = `${window.location.pathname}?tab=${newTab}`;
+  window.history.replaceState({}, '', url);
+};
+
 </script>
 
 <template>
@@ -82,15 +93,17 @@ const deletar = () => {
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="flex h-full flex-1 flex-col gap-4 p-4 overflow-x-auto">
       <BarLoading v-if="loading" :progress="progress"></BarLoading>
-      <Tabs :default-value="tabList[0].value">
+      <Tabs :default-value="currentTab" @update:value="onChangeTab">
         <TabsList class="bg-[var(--sidebar-primary-foreground)]">
-          <TabsTrigger class="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-            v-for="(tab, index) in tabList" :key="index" :value="tab.value">
+          <TabsTrigger v-for="(tab, index) in tabList" :key="index" :value="tab.value" @click="onChangeTab(tab.value)"
+            class="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             {{ tab.name }}
           </TabsTrigger>
         </TabsList>
+
         <TabsContent v-for="(tab, index) in tabList" :key="index" :value="tab.value" class="p-0">
-          <component :is="tab.component" :clinica="props.clinica" :enderecos="props.clinica.enderecos" :procedimentos="props.clinica.procedimentos"/>
+          <component :is="tab.component" :clinica="props.clinica" :enderecos="props.clinica.enderecos"
+            :procedimentos="props.clinica.procedimentos" />
         </TabsContent>
       </Tabs>
 
