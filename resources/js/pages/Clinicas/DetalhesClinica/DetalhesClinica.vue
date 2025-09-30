@@ -14,6 +14,7 @@ import { Inertia } from '@inertiajs/inertia';
 import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import DadosClinica from './TabsContents/DadosClinica.vue';
+import ProcedimentosClinica from './TabsContents/ProcedimentosClinica.vue';
 
 
 
@@ -37,6 +38,11 @@ const tabList = [
     name: 'Endereço',
     value: 'endereco',
     component: DadosEndereco,
+  },
+  {
+    name: 'Procedimentos',
+    value: 'procedimentos',
+    component: ProcedimentosClinica,
   },
 ]
 
@@ -84,7 +90,7 @@ const deletar = () => {
           </TabsTrigger>
         </TabsList>
         <TabsContent v-for="(tab, index) in tabList" :key="index" :value="tab.value" class="p-0">
-          <component :is="tab.component" :clinica="props.clinica" :enderecos="props.clinica.enderecos"/>
+          <component :is="tab.component" :clinica="props.clinica" :enderecos="props.clinica.enderecos" :procedimentos="props.clinica.procedimentos"/>
         </TabsContent>
       </Tabs>
 

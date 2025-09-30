@@ -1,4 +1,5 @@
 import { EnderecoInterface } from "../EnderecoInterface";
+import { ProcedimentoInterface } from "../Procedimentos/ProcedimentoInterface";
 
 export interface ClinicaInterface {
     id: number;
@@ -10,4 +11,5 @@ export interface ClinicaInterface {
     email: string;
 
     enderecos: EnderecoInterface[];
+    procedimentos: ProcedimentoInterface[];
 }
