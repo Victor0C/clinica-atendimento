@@ -24,7 +24,7 @@ import { ref } from 'vue'
 import * as z from 'zod'
 
 const props = withDefaults(
-  defineProps<{ clinica: ClinicaInterface }>(),
+  defineProps<{ clinica: Omit<ClinicaInterface, 'procedimentos'> }>(),
   {
     clinica: () => ({
       id: 0,

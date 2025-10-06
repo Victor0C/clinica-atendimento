@@ -62,7 +62,7 @@ class ClinicasService implements ClinicasServiceInterface
     $procedimento = $procedimentoService->get($procedimentoId);
 
     $clinica->procedimentos()->attach([$procedimento->id => ['preco' => $preco]]);
-    $clinica->load('procedimentos');
+    $clinica->load('procedimentos.especialidade');
 
     return $clinica;
   }
