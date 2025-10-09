@@ -11,6 +11,8 @@ import { useIsMobile } from '@/composables/useIsMobile';
 import { ProcedimentoInterface } from '@/Interfaces/Procedimentos/ProcedimentoInterface';
 import { ColumnDef, FlexRender, getCoreRowModel, Row, useVueTable } from '@tanstack/vue-table';
 import { computed, h } from 'vue';
+import { Trash2 } from 'lucide-vue-next';
+import ConfirmAction from '@/components/DialogAlerts/ConfirmAction.vue';
 
 
 const props = defineProps<{ procedimentos: ProcedimentoInterface[] }>()
@@ -24,6 +26,10 @@ const formataPreco = (preco: number) => {
     currency: 'BRL'
   }).format(valorReais)
 }
+
+const handleDelete = (id: number) => {
+  console.log(id);
+};
 
 const allColumns: ColumnDef<ProcedimentoInterface>[] = [
   {
@@ -42,23 +48,60 @@ const allColumns: ColumnDef<ProcedimentoInterface>[] = [
     cell: ({ row }) => h("div", {}, formataPreco(row.getValue('preco')))
     ,
   },
+  {
+    accessorKey: 'Remover',
+    header: 'Remover',
+    cell: ({ row }) =>
+      h(
+        'div',
+        {},
+        [
+          h(
+            ConfirmAction,
+            {
+              title: 'Remover esse procedimento?',
+              description: 'Essa ação não pode ser desfeita.',
+              onConfirm: () => handleDelete(row.original.id),
+            },
+            {
+              default: () => h(Trash2, { class: "text-red-500 cursor-pointer", size: 20 })
+            }
+          )
+        ]
+      ),
+  },
 ];
 
 
 const columns = computed(() => {
   if (isMobile.value) {
-    const nomeCol = allColumns.find(col => col.header === 'Especialidade');
+    const nomeCol = allColumns.find(col => col.header === 'Procedimento');
     const precoCol = allColumns.find(col => col.header === 'Preço');
-    if (!nomeCol || !precoCol) return [];
+    const removerCol = allColumns.find(col => col.header === 'Remover');
+    if (!nomeCol || !precoCol || !removerCol) return [];
 
     return [
       {
         ...nomeCol,
-        cell: ({ row }: { row: Row<ProcedimentoInterface> }) => h('div', {}, row.original.especialidade)
+        cell: ({ row }: { row: Row<ProcedimentoInterface> }) => h('div', {}, row.original.nome)
       },
       {
         ...precoCol,
         cell: ({ row }: { row: Row<ProcedimentoInterface> }) => h('div', {}, formataPreco(row.original.preco))
+      },
+      {
+        ...removerCol,
+        cell: ({ row }: { row: Row<ProcedimentoInterface> }) => h(
+          ConfirmAction,
+          {
+            title: 'Remover esse procedimento?',
+            description: 'Essa ação não pode ser desfeita.',
+            onConfirm: () => handleDelete(row.original.id),
+          },
+          {
+            default: () => h(Trash2, { class: "text-red-500 cursor-pointer", size: 20 })
+          }
+        )
       },
     ];
   }

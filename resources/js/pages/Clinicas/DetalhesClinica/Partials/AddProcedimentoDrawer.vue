@@ -43,19 +43,19 @@ const onAnimationEnd = (open: boolean) => {
 };
 
 const closeDrawer = () => {
-  selectedFramework.value = null;
+  procedimentoSelecionado.value = null;
   form.resetForm();
   emit('update:open', false);
 };
 
-const frameworks: any[] = [];
-const selectedFramework = ref<any>(null);
+const procedimentos: any[] = [];
+const procedimentoSelecionado = ref<any>(null);
 
 const getProcedimento = () => {
   getAllNotInClinica(props.clinicaId)
     .then(async (data) => {
       data.forEach((item) => {
-        frameworks.push({
+        procedimentos.push({
           value: item.id,
           label: item.nome,
         });
@@ -101,14 +101,16 @@ const loading = ref(false);
 const progress = ref(0);
 
 const add = form.handleSubmit(async (values) => {
-  if (!selectedFramework.value) return;
+  if (!procedimentoSelecionado.value) return;
   loading.value = true;
   const precoCentavos = convertToCents(values.preco);
 
-  addProcedimento(props.clinicaId, selectedFramework.value.value, precoCentavos)
+  addProcedimento(props.clinicaId, procedimentoSelecionado.value.value, precoCentavos)
     .then(async (clinica) => {
       progress.value = 100;
       emit('update:procedimento', clinica.procedimentos);
+      const index = procedimentos.findIndex(p => p.value === procedimentoSelecionado.value.value);
+      if (index !== -1) procedimentos.splice(index, 1);
       await wait(500);
       closeDrawer();
     })
@@ -134,7 +136,7 @@ const add = form.handleSubmit(async (values) => {
           <DrawerTitle>Escolha o procedimento que deseja adicionar</DrawerTitle>
 
           <div class="w-full mt-3">
-            <ComboBox v-model:modelValue="selectedFramework" :items="frameworks"
+            <ComboBox v-model:modelValue="procedimentoSelecionado" :items="procedimentos"
               placeholder="Selecione um procedimento..." />
           </div>
 
@@ -150,7 +152,7 @@ const add = form.handleSubmit(async (values) => {
         </DrawerHeader>
 
         <DrawerFooter class="flex flex-col gap-2">
-          <Button @click="add" :disabled="loading || !selectedFramework || !!errorMessage || !preco">
+          <Button @click="add" :disabled="loading || !procedimentoSelecionado || !!errorMessage || !preco">
             Adicionar
           </Button>
 
