@@ -10,12 +10,14 @@ import TableRow from '@/components/ui/table/TableRow.vue';
 import { useIsMobile } from '@/composables/useIsMobile';
 import { ProcedimentoInterface } from '@/Interfaces/Procedimentos/ProcedimentoInterface';
 import { ColumnDef, FlexRender, getCoreRowModel, Row, useVueTable } from '@tanstack/vue-table';
-import { computed, h } from 'vue';
+import { computed, h, ref, watch } from 'vue';
 import { Trash2 } from 'lucide-vue-next';
 import ConfirmAction from '@/components/DialogAlerts/ConfirmAction.vue';
+import { removeProcedimento } from '@/Services/ClinicaServcie';
+import { useToasts } from '@/composables/useToasts';
 
 
-const props = defineProps<{ procedimentos: ProcedimentoInterface[] }>()
+const props = defineProps<{ procedimentos: ProcedimentoInterface[], clinica_id: number }>()
 const { isMobile } = useIsMobile();
 
 const formataPreco = (preco: number) => {
@@ -27,8 +29,25 @@ const formataPreco = (preco: number) => {
   }).format(valorReais)
 }
 
-const handleDelete = (id: number) => {
-  console.log(id);
+const loading = ref(false);
+const procedimentos = ref([...props.procedimentos]);
+const { showToastPromise } = useToasts()
+
+watch(() => props.procedimentos, (newProcedimentos: ProcedimentoInterface[]) => {
+  procedimentos.value = [...newProcedimentos];
+});
+
+const handleDelete = async (id: number) => {
+  loading.value = true;
+  await showToastPromise(
+    removeProcedimento(props.clinica_id, id),
+    () => {
+      procedimentos.value = procedimentos.value.filter(proc => proc.id !== id);
+      return 'Procedimento removido com sucesso';
+    },
+    () => 'Erro ao remover procedimento'
+  );
+  loading.value = false;
 };
 
 const allColumns: ColumnDef<ProcedimentoInterface>[] = [
@@ -99,7 +118,11 @@ const columns = computed(() => {
             onConfirm: () => handleDelete(row.original.id),
           },
           {
-            default: () => h(Trash2, { class: "text-red-500 cursor-pointer", size: 20 })
+            default: () => h(Trash2, {
+              class: `text-red-500 ${loading.value ? 'opacity-50' : 'cursor-pointer'}`,
+              size: 20,
+              'aria-disabled': loading.value
+            })
           }
         )
       },
@@ -111,7 +134,7 @@ const columns = computed(() => {
 
 const table = computed(() =>
   useVueTable({
-    data: props.procedimentos,
+    data: procedimentos.value,
     columns: columns.value,
     getCoreRowModel: getCoreRowModel(),
   })

@@ -120,7 +120,7 @@ const updateProcedimentos = (procedimentos: ProcedimentoInterface[]) => {
 
         <TabsContent v-for="(tab, index) in tabList" :key="index" :value="tab.value" class="p-0">
           <component :is="tab.component" :clinica="clinica" :enderecos="clinica.enderecos"
-            :procedimentos="clinica.procedimentos" />
+            :procedimentos="clinica.procedimentos" :clinica_id="clinica.id"/>
         </TabsContent>
       </Tabs>
 

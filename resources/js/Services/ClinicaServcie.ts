@@ -59,4 +59,13 @@ async function addProcedimento(id: number, procedimentId: number, preco: number)
     }
 }
 
-export { createClinica, deleteClinica, editarClinica, getAllClinicas, addProcedimento};
+async function removeProcedimento(id: number, procedimentId: number): Promise<void> {
+    try {
+        await api.delete(`clinicas/${id}/procedimentos/${procedimentId}`);
+    } catch (error: any) {
+        const message = error.response?.data?.message || 'Erro ao remover procedimento. Tente novamente.';
+        throw new Error(message);
+    }
+}
+
+export { createClinica, deleteClinica, editarClinica, getAllClinicas, addProcedimento, removeProcedimento };
