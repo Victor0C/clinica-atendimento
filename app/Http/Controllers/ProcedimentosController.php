@@ -9,6 +9,7 @@ use App\Http\Resources\ProcedimentoResource;
 use App\Interfaces\Procedimentos\ProcedimentosServiceInterface;
 use App\Models\Procedimento;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ProcedimentosController extends Controller
 {
@@ -27,12 +28,13 @@ class ProcedimentosController extends Controller
         try {
             $service = app()->make(ProcedimentosServiceInterface::class);
             $procedimentos = $service->getAll($request->query('search'));
-            if ($request->acceptsJson()) {
+
+            if ($request->wantsJson()) {
                 return response()->json(ProcedimentoResource::collection($procedimentos), 200);
             }
 
-            return view('procedimentos.index', [
-                'procedimentos' => ProcedimentoResource::collection($procedimentos)
+            return Inertia::render('Procedimentos/Procedimentos', [
+                'page' => ProcedimentoResource::collection($procedimentos)
             ]);
         } catch (\Throwable $e) {
             return RequestHelper::onError($e);
@@ -53,7 +55,7 @@ class ProcedimentosController extends Controller
     {
         try {
             $service = app()->make(ProcedimentosServiceInterface::class);
-            return response()->json(new ProcedimentoResource($service->update($id, $request->all())), 200);
+            return response()->json(new ProcedimentoResource($service->update($id, $request->validated())), 200);
         } catch (\Throwable $e) {
             return RequestHelper::onError($e);
         }

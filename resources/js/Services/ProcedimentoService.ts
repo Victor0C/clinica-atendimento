@@ -13,5 +13,17 @@ async function getAllNotInClinica(clinicaId: number): Promise<ProcedimentoInterf
     }
 }
 
+async function getAllProcedimentos(search?: string):  Promise<Omit<ProcedimentoInterface[], 'preco'>> {
+    try {
+        const response = await api.get('procedimentos', {
+            params: { search }
+        });
+        return response.data;
+    } catch (error: any) {
+        const message = error.response?.data?.message || 'Erro ao buscar procedimentos. Tente novamente.';
+        throw new Error(message);
+    }
+}
 
-export { getAllNotInClinica };
+
+export { getAllNotInClinica, getAllProcedimentos };

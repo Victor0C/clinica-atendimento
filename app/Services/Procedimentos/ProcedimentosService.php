@@ -15,7 +15,7 @@ class ProcedimentosService implements ProcedimentosServiceInterface
 
   public function get(int $id): Procedimento
   {
-    $procedimento = Procedimento::find($id);
+    $procedimento = Procedimento::with(['especialidade'])->find($id);
 
     if (!$procedimento) {
       throw new NotFoundProcedimentoException();
@@ -37,7 +37,7 @@ class ProcedimentosService implements ProcedimentosServiceInterface
 
   public function getAll(?string $search = null)
   {
-    $query = Procedimento::query();
+    $query = Procedimento::with(['especialidade']);
 
     if ($search) {
       $query->where('nome', 'like', "%{$search}%");
@@ -53,10 +53,12 @@ class ProcedimentosService implements ProcedimentosServiceInterface
 
     $especialidadeService->get($data['especialidade_id']);
 
-    return Procedimento::create([
+    $procedimento = Procedimento::create([
       'nome' => $data['nome'],
       'especialidade_id' => $data['especialidade_id'],
     ]);
+
+    return $procedimento->load('especialidade');
   }
 
   public function update(int $id, array $data): Procedimento
