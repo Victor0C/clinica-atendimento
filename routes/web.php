@@ -42,6 +42,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('delete/{id}', [ClinicasController::class, 'deletarClinica']);
     });
 
+    Route::resource('procedimentos', ProcedimentosController::class);
 });
 
 require __DIR__ . '/settings.php';

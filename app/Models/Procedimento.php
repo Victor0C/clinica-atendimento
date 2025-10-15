@@ -9,6 +9,11 @@ class Procedimento extends Model
 {
     protected $table = 'procedimentos';
 
+    protected $fillable = [
+        'nome',
+        'especialidade_id',
+    ];
+
     public function especialidade()
     {
         return $this->belongsTo(Especialidade::class, 'especialidade_id', 'id');

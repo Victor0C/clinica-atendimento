@@ -34,4 +34,5 @@ class EspecialidadeService implements EspecialidadeServiceInterface
 
     return $query->get();
   }
+
 }
