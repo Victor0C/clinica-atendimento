@@ -26,9 +26,10 @@ import {
 } from "@/components/ui/table";
 import { useToasts } from '@/composables/useToasts';
 import { ProcedimentoInterface } from '@/Interfaces/Procedimentos/ProcedimentoInterface';
-import { getAllProcedimentos } from '@/Services/ProcedimentoService';
+import { deleteProcedimento, getAllProcedimentos } from '@/Services/ProcedimentoService';
 import { wait } from '@/Utils';
-import { Plus, Search } from 'lucide-vue-next';
+import { Plus, Search, Trash2 } from 'lucide-vue-next';
+import ConfirmAction from '@/components/DialogAlerts/ConfirmAction.vue';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -50,6 +51,21 @@ watch(
   { immediate: true }
 );
 
+const { showToastPromise } = useToasts()
+
+const handleDelete = async (id: number) => {
+  loading.value = true;
+  await showToastPromise(
+    deleteProcedimento(id),
+    () => {
+      localPage.value = localPage.value.filter(proc => proc.id !== id);
+      return 'Procedimento deletado com sucesso';
+    },
+    () => 'Erro ao deletar procedimento'
+  );
+  loading.value = false;
+};
+
 const allColumns: ColumnDef<Omit<ProcedimentoInterface, 'preco'>>[] = [
   {
     accessorKey: 'id',
@@ -65,6 +81,28 @@ const allColumns: ColumnDef<Omit<ProcedimentoInterface, 'preco'>>[] = [
     accessorKey: 'especialidade',
     header: 'Especialidade',
     cell: ({ row }) => h("div", {}, row.getValue("especialidade")),
+  },
+  {
+    accessorKey: 'Remover',
+    header: 'Remover',
+    cell: ({ row }) =>
+      h(
+        'div',
+        {},
+        [
+          h(
+            ConfirmAction,
+            {
+              title: 'Remover esse procedimento?',
+              description: 'Essa ação não pode ser desfeita.',
+              onConfirm: () => handleDelete(row.original.id),
+            },
+            {
+              default: () => h(Trash2, { class: "text-red-500 cursor-pointer", size: 20 })
+            }
+          )
+        ]
+      ),
   },
 ]
 

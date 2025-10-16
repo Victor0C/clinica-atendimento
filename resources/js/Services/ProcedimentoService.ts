@@ -25,5 +25,13 @@ async function getAllProcedimentos(search?: string):  Promise<Omit<ProcedimentoI
     }
 }
 
+async function deleteProcedimento(id: number): Promise<void> {
+    try {
+        await api.delete(`procedimentos/${id}`);
+    } catch (error: any) {
+        const message = error.response?.data?.message || 'Erro ao excluir procedimento. Tente novamente.';
+        throw new Error(message);
+    }
+}
 
-export { getAllNotInClinica, getAllProcedimentos };
+export { getAllNotInClinica, getAllProcedimentos, deleteProcedimento };
