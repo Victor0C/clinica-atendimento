@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Combobox, ComboboxAnchor, ComboboxEmpty, ComboboxGroup, ComboboxInput, ComboboxItem, ComboboxItemIndicator, ComboboxList } from "@/components/ui/combobox";
 import { Check, ChevronsUpDown } from "lucide-vue-next";
-import { defineEmits, defineProps, ref } from "vue";
+import { defineEmits, defineProps, ref, watch } from "vue";
 import ComboboxTrigger from "../ui/combobox/ComboboxTrigger.vue";
 
 const props = defineProps<{
@@ -9,6 +9,16 @@ const props = defineProps<{
   placeholder?: string;
   modelValue?: any;
 }>();
+
+const internalValue = ref(props.modelValue);
+
+watch(() => props.modelValue, (val) => {
+  internalValue.value = val;
+});
+
+watch(internalValue, (val) => {
+  emit('update:modelValue', val);
+});
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: any): void;
@@ -24,7 +34,7 @@ const inputRef = ref<HTMLInputElement | null>(null);
 </script>
 
 <template>
-  <Combobox by="label" :value="props.modelValue" class="w-full">
+  <Combobox by="label" v-model="internalValue" class="w-full">
     <ComboboxAnchor class="relative w-full">
       <div ref="inputRef" class="relative w-full">
         <ComboboxInput :display-value="(val) => val?.label ?? ''"

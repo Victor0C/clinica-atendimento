@@ -29,7 +29,7 @@ import { useToasts } from '@/composables/useToasts';
 import { ProcedimentoInterface } from '@/Interfaces/Procedimentos/ProcedimentoInterface';
 import { deleteProcedimento, getAllProcedimentos } from '@/Services/ProcedimentoService';
 import { wait } from '@/Utils';
-import { Plus, Search, Trash2 } from 'lucide-vue-next';
+import { Pencil, Plus, Search, Trash2 } from 'lucide-vue-next';
 import CriarEditarProcedimentoDrawer from './Partials/CriarEditarProcedimentoDrawer.vue';
 
 
@@ -43,6 +43,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 const props = defineProps<{ page: Array<Omit<ProcedimentoInterface, 'preco'>> }>();
 
 const localPage = ref<Array<Omit<ProcedimentoInterface, 'preco'>>>([]);
+const targetProcedimento = ref<Omit<ProcedimentoInterface, 'preco'> | null>(null);
 
 watch(
   () => props.page,
@@ -67,6 +68,12 @@ const handleDelete = async (id: number) => {
   loading.value = false;
 };
 
+
+const editarProcedimento = (procedimento: Omit<ProcedimentoInterface, 'preco'>) => {
+  targetProcedimento.value = procedimento;
+  criaEditarProcedimento.value = true;
+}
+
 const allColumns: ColumnDef<Omit<ProcedimentoInterface, 'preco'>>[] = [
   {
     accessorKey: 'id',
@@ -84,13 +91,18 @@ const allColumns: ColumnDef<Omit<ProcedimentoInterface, 'preco'>>[] = [
     cell: ({ row }) => h("div", {}, row.getValue("especialidade")),
   },
   {
-    accessorKey: 'Remover',
-    header: 'Remover',
+    accessorKey: 'acoes',
+    header: 'Ações',
     cell: ({ row }) =>
       h(
         'div',
-        {},
+        { class: 'flex gap-2' },
         [
+          h(Pencil, {
+            class: "text-blue-500 cursor-pointer",
+            size: 20,
+            onClick: () => editarProcedimento(row.original)
+          }),
           h(
             ConfirmAction,
             {
@@ -102,6 +114,7 @@ const allColumns: ColumnDef<Omit<ProcedimentoInterface, 'preco'>>[] = [
               default: () => h(Trash2, { class: "text-red-500 cursor-pointer", size: 20 })
             }
           )
+
         ]
       ),
   },
@@ -149,6 +162,7 @@ const search = () => {
 const criaEditarProcedimento = ref<boolean>(false);
 
 const openCriarEditar = (state: boolean) => {
+  targetProcedimento.value = null;
   criaEditarProcedimento.value = state
 }
 
@@ -157,6 +171,7 @@ const handleUpdateOpen = (value: boolean) => {
 };
 
 const updateProcedimentos = (procedimento: Omit<ProcedimentoInterface, 'preco'>) => {
+  console.log(procedimento);
   const index = localPage.value.findIndex(p => p.id === procedimento.id);
   if (index !== -1) {
     localPage.value = [
@@ -178,7 +193,7 @@ const updateProcedimentos = (procedimento: Omit<ProcedimentoInterface, 'preco'>)
 
   <AppLayout :breadcrumbs="breadcrumbs">
     <CriarEditarProcedimentoDrawer :open="criaEditarProcedimento" @update:open="handleUpdateOpen"
-      @update:procedimento="updateProcedimentos" />
+      @update:procedimento="updateProcedimentos" :procedimento="targetProcedimento" />
 
     <div class="flex h-full flex-1 flex-col gap-4 p-4 overflow-x-auto">
       <BarLoading v-if="loading" :progress="progress"></BarLoading>
@@ -191,8 +206,6 @@ const updateProcedimentos = (procedimento: Omit<ProcedimentoInterface, 'preco'>)
             <Search />
           </Button>
         </div>
-
-
 
         <Button class="sm:ml-auto" @click="openCriarEditar(true)">
           <Plus /> Novo procedimento

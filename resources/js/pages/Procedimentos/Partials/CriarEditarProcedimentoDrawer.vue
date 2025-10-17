@@ -21,16 +21,22 @@ import { Input } from '@/components/ui/input';
 import { useToasts } from '@/composables/useToasts';
 import { ProcedimentoInterface } from '@/Interfaces/Procedimentos/ProcedimentoInterface';
 import { getAllEspecialidades } from '@/Services/EspecialidadeService';
-import { createProcedimento } from '@/Services/ProcedimentoService';
+import { createProcedimento, editProcedimento } from '@/Services/ProcedimentoService';
 import { wait } from '@/Utils';
 import { toTypedSchema } from '@vee-validate/zod';
 import { useField, useForm } from 'vee-validate';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { z } from 'zod';
 
 const props = withDefaults(
-  defineProps<{ open?: boolean }>(),
-  { open: false }
+  defineProps<{
+    open?: boolean,
+    procedimento?: Omit<ProcedimentoInterface, 'preco'> | null
+  }>(),
+  {
+    open: false,
+    procedimento: null
+  }
 );
 
 const emit = defineEmits<{
@@ -72,10 +78,35 @@ onMounted(() => {
   getEspecialidade();
 });
 
+watch(() => props.open, (newOpen) => {
+  if (newOpen) {
+    form.setValues({
+      nome: props.procedimento?.nome || ''
+    }, false);
+
+    const checkEspecialidades = setInterval(() => {
+      if (especialidades.length > 0) {
+        const especialidadeEncontrada = especialidades.find(
+          esp => esp.label === props.procedimento?.especialidade
+        );
+        if (especialidadeEncontrada) {
+          especialidadeSelecionado.value = { ...especialidadeEncontrada };
+          clearInterval(checkEspecialidades);
+        }
+      }
+    }, 100);
+
+
+    setTimeout(() => clearInterval(checkEspecialidades), 5000);
+  } else {
+    form.resetForm();
+    especialidadeSelecionado.value = null;
+  }
+});
+
 const formSchema = toTypedSchema(
   z.object({
     nome: z.string({ message: 'Informe o nome do procedimento' })
-      .min(2, "Nome do procedimento é obrigatório")
       .max(255, "Nome do procedimento deve ter no máximo 255 caracteres")
   })
 );
@@ -83,7 +114,7 @@ const formSchema = toTypedSchema(
 const form = useForm({
   validationSchema: formSchema,
   initialValues: {
-    nome: ''
+    nome: props.procedimento?.nome || ''
   }
 });
 
@@ -92,29 +123,38 @@ const { value: nome, errorMessage } = useField('nome');
 const loading = ref(false);
 const progress = ref(0);
 
-const add = form.handleSubmit(async (values) => {
+const criarEditar = form.handleSubmit(async (values) => {
   if (!especialidadeSelecionado.value) return;
   loading.value = true;
   const nome = values.nome;
 
-  createProcedimento(nome, especialidadeSelecionado.value.value)
-    .then(async (procedimento: Omit<ProcedimentoInterface, 'preco'>) => {
-      progress.value = 100;
-      emit('update:procedimento', procedimento);
-      await wait(500);
-      closeDrawer();
-    })
-    .catch(async (err) => {
-      progress.value = 100;
-      const { error } = useToasts();
-      await wait(500);
-      error(err instanceof Error ? err.message : "Erro ao adicionar procedimento");
-    })
-    .finally(() => {
-      loading.value = false;
-      progress.value = 0;
-    });
+  try {
+    let procedimento: Omit<ProcedimentoInterface, 'preco'>;
+
+    if (props.procedimento?.id) {
+      procedimento = await editProcedimento(props.procedimento.id, { nome, especialidade_id: especialidadeSelecionado.value.value });
+    } else {
+      procedimento = await createProcedimento(nome, especialidadeSelecionado.value.value);
+    }
+
+    progress.value = 100;
+    emit('update:procedimento', procedimento);
+    await wait(500);
+    closeDrawer();
+  } catch (err) {
+    progress.value = 100;
+    const { error } = useToasts();
+    await wait(500);
+    error(err instanceof Error ? err.message : "Erro ao salvar procedimento");
+  } finally {
+    loading.value = false;
+    progress.value = 0;
+  }
 });
+
+
+
+
 </script>
 
 <template>
@@ -134,7 +174,7 @@ const add = form.handleSubmit(async (values) => {
             <FormItem class="w-full mt-7">
               <FormLabel>Nome do procedimento</FormLabel>
               <FormControl>
-                <Input type="text" placeholder="Ex: Cardiologia" v-bind="componentField" />
+                <Input type="text" placeholder="Ex: Eletrocardiograma (ECG)" v-bind="componentField" />
               </FormControl>
               <FormMessage>{{ errorMessage }}</FormMessage>
             </FormItem>
@@ -142,8 +182,8 @@ const add = form.handleSubmit(async (values) => {
         </DrawerHeader>
 
         <DrawerFooter class="flex flex-col gap-2">
-          <Button @click="add" :disabled="loading || !especialidadeSelecionado || !!errorMessage || !nome">
-            Adicionar
+          <Button @click="criarEditar" :disabled="loading || !especialidadeSelecionado || !!errorMessage || !nome">
+            Salvar
           </Button>
 
           <DrawerClose class="w-full" @click="closeDrawer">

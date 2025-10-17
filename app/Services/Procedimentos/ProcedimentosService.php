@@ -48,9 +48,15 @@ class ProcedimentosService implements ProcedimentosServiceInterface
 
   public function create(array $data): Procedimento
   {
+    $existingProcedimento = Procedimento::where('nome', $data['nome'])
+      ->where('especialidade_id', $data['especialidade_id'])
+      ->exists();
+
+    if ($existingProcedimento) {
+      throw new \Exception('Já existe um procedimento com este nome.', 422);
+    }
 
     $especialidadeService = app()->make(EspecialidadeServiceInterface::class);
-
     $especialidadeService->get($data['especialidade_id']);
 
     $procedimento = Procedimento::create([
@@ -65,12 +71,27 @@ class ProcedimentosService implements ProcedimentosServiceInterface
   {
     $procedimento = $this->get($id);
 
+    $existingProcedimento = Procedimento::where('nome', $data['nome'])
+      ->where('id', '!=', $id)
+      ->where('especialidade_id', $data['especialidade_id'])
+      ->exists();
+
+    if ($existingProcedimento) {
+      throw new \Exception('Já existe um procedimento com este nome.', 422);
+    }
+
+    $shouldReloadEspecialidade = isset($data['especialidade_id']) && $data['especialidade_id'] != $procedimento->especialidade_id;
+
     if (isset($data['especialidade_id'])) {
       $especialidadeService = app()->make(EspecialidadeServiceInterface::class);
       $especialidadeService->get($data['especialidade_id']);
     }
 
     $procedimento->update($data);
+
+    if ($shouldReloadEspecialidade) {
+      $procedimento->load('especialidade');
+    }
 
     return $procedimento;
   }

@@ -44,4 +44,14 @@ async function createProcedimento(nome: string, especialidadeId: number): Promis
     }
 }
 
-export { getAllNotInClinica, getAllProcedimentos, deleteProcedimento, createProcedimento };
+async function editProcedimento(id: number, data: { nome?: string; especialidade_id?: number }): Promise<ProcedimentoInterface> {
+    try {
+        const response = await api.put(`procedimentos/${id}`, data);
+        return response.data;
+    } catch (error: any) {
+        const message = error.response?.data?.message || 'Erro ao editar procedimento. Tente novamente.';
+        throw new Error(message);
+    }
+}
+
+export { getAllNotInClinica, getAllProcedimentos, deleteProcedimento, createProcedimento, editProcedimento };
