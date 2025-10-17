@@ -3,7 +3,6 @@
 namespace App\Services\Especialidades;
 
 use App\Interfaces\Especialidades\EspecialidadeServiceInterface;
-use App\DTOs\Especialidades\EspecialidadeDTO;
 use App\DTOs\Especialidades\SearchGetAllEspecialidadesDTO;
 use App\Exceptions\Especialidades\NotFoundEspecialidadeException;
 use App\Models\Especialidade;
@@ -21,15 +20,12 @@ class EspecialidadeService implements EspecialidadeServiceInterface
     return $especialidade;
   }
 
-  public function getAll(int $page, int $perPage = 20, ?SearchGetAllEspecialidadesDTO $searchDTO = null): array
+  public function getAll(?SearchGetAllEspecialidadesDTO $searchDTO = null)
   {
-    $query = Especialidade::forPage($page, $perPage);
+    $query = Especialidade::query();
 
-    if ($searchDTO) {
-
-      if ($searchDTO->nome) {
-        $query->where('nome', 'like', "%{$searchDTO->nome}%");
-      }
+    if ($searchDTO && $searchDTO->nome) {
+      $query->where('nome', 'like', "%{$searchDTO->nome}%");
     }
 
     return $query->get();

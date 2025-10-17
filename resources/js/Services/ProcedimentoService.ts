@@ -34,4 +34,14 @@ async function deleteProcedimento(id: number): Promise<void> {
     }
 }
 
-export { getAllNotInClinica, getAllProcedimentos, deleteProcedimento };
+async function createProcedimento(nome: string, especialidadeId: number): Promise<ProcedimentoInterface> {
+    try {
+        const response = await api.post('procedimentos', { nome, especialidade_id: especialidadeId });
+        return response.data;
+    } catch (error: any) {
+        const message = error.response?.data?.message || 'Erro ao criar procedimento. Tente novamente.';
+        throw new Error(message);
+    }
+}
+
+export { getAllNotInClinica, getAllProcedimentos, deleteProcedimento, createProcedimento };

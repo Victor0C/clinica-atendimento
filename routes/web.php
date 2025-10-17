@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\ClinicasController;
+use App\Http\Controllers\EspecialidadeController;
 use App\Http\Controllers\PacientesController;
-use App\Http\Controllers\Procedimentos;
 use App\Http\Controllers\ProcedimentosController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -43,6 +43,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::resource('procedimentos', ProcedimentosController::class);
+    Route::resource('especialidades', EspecialidadeController::class);
 });
 
 require __DIR__ . '/settings.php';

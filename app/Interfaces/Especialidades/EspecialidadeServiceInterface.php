@@ -9,5 +9,5 @@ use App\Models\Especialidade;
 interface EspecialidadeServiceInterface
 {
     public function get($id): Especialidade;
-    public function getAll(int $page, int $perPage = 20, ?SearchGetAllEspecialidadesDTO $searchDTO = null): array;
+    public function getAll(?SearchGetAllEspecialidadesDTO $searchDTO = null);
 }

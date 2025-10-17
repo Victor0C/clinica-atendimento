@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 
 import type {
   ColumnDef,
@@ -13,6 +13,7 @@ import {
 } from "@tanstack/vue-table";
 import { computed, h, ref, watch } from "vue";
 
+import ConfirmAction from '@/components/DialogAlerts/ConfirmAction.vue';
 import SearchInput from '@/components/Inputs/SearchInput.vue';
 import BarLoading from '@/components/Loading/BarLoading.vue';
 import { Button } from "@/components/ui/button";
@@ -29,7 +30,7 @@ import { ProcedimentoInterface } from '@/Interfaces/Procedimentos/ProcedimentoIn
 import { deleteProcedimento, getAllProcedimentos } from '@/Services/ProcedimentoService';
 import { wait } from '@/Utils';
 import { Plus, Search, Trash2 } from 'lucide-vue-next';
-import ConfirmAction from '@/components/DialogAlerts/ConfirmAction.vue';
+import CriarEditarProcedimentoDrawer from './Partials/CriarEditarProcedimentoDrawer.vue';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -110,13 +111,13 @@ const columns = computed(() => {
   return allColumns;
 });
 
-const table = computed(() =>
-  useVueTable({
-    data: localPage.value,
-    columns: columns.value,
-    getCoreRowModel: getCoreRowModel(),
-  })
-)
+const table = useVueTable({
+  get data() {
+    return localPage.value
+  },
+  columns: columns.value,
+  getCoreRowModel: getCoreRowModel(),
+})
 
 const loading = ref(false);
 const progress = ref(0);
@@ -145,6 +146,30 @@ const search = () => {
     });
 };
 
+const criaEditarProcedimento = ref<boolean>(false);
+
+const openCriarEditar = (state: boolean) => {
+  criaEditarProcedimento.value = state
+}
+
+const handleUpdateOpen = (value: boolean) => {
+  criaEditarProcedimento.value = value;
+};
+
+const updateProcedimentos = (procedimento: Omit<ProcedimentoInterface, 'preco'>) => {
+  const index = localPage.value.findIndex(p => p.id === procedimento.id);
+  if (index !== -1) {
+    localPage.value = [
+      ...localPage.value.slice(0, index),
+      procedimento,
+      ...localPage.value.slice(index + 1)
+    ];
+  } else {
+    localPage.value = [procedimento, ...localPage.value];
+  }
+}
+
+
 </script>
 
 <template>
@@ -152,6 +177,9 @@ const search = () => {
   <Head title="Procedimentos" />
 
   <AppLayout :breadcrumbs="breadcrumbs">
+    <CriarEditarProcedimentoDrawer :open="criaEditarProcedimento" @update:open="handleUpdateOpen"
+      @update:procedimento="updateProcedimentos" />
+
     <div class="flex h-full flex-1 flex-col gap-4 p-4 overflow-x-auto">
       <BarLoading v-if="loading" :progress="progress"></BarLoading>
       <div class="flex flex-col sm:flex-row w-full gap-2">
@@ -164,13 +192,12 @@ const search = () => {
           </Button>
         </div>
 
-        <!-- ARRUMAR AQUI -->
-        <Link href="/pacientes/novo">
 
-        <Button class="sm:ml-auto">
+
+        <Button class="sm:ml-auto" @click="openCriarEditar(true)">
           <Plus /> Novo procedimento
         </Button>
-        </Link>
+
       </div>
 
       <div class="rounded-md border">
