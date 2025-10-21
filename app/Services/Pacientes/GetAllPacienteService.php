@@ -2,15 +2,15 @@
 
 namespace App\Services\Pacientes;
 
-use App\DTOs\Pacientes\PacienteDTO;
 use App\DTOs\Pacientes\SearchGetAllPacientesDTO;
 use App\Interfaces\Paciente\GetAllPacienteServiceInterface;
 use App\Models\Paciente;
+use Illuminate\Database\Eloquent\Collection;
 
 class GetAllPacienteService implements GetAllPacienteServiceInterface
 {
 
-  public function fire(int $page, int $perPage = 20, ?SearchGetAllPacientesDTO $searchDTO = null): array
+  public function fire(int $page, int $perPage = 20, ?SearchGetAllPacientesDTO $searchDTO = null): Collection
   {
     $query = Paciente::with(['enderecos'])
       ->forPage($page, $perPage);
@@ -29,8 +29,6 @@ class GetAllPacienteService implements GetAllPacienteServiceInterface
       }
     }
 
-    return $query->get()->map(function ($paciente) {
-      return new PacienteDTO($paciente->toArray());
-    })->toArray();
+    return $query->get();
   }
 }

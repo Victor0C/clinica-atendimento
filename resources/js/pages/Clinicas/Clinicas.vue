@@ -36,7 +36,7 @@ import { Eye, Plus, Search } from 'lucide-vue-next';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: 'Clinicas',
+    title: 'Clinica',
     href: '/clinicas',
   },
 ];

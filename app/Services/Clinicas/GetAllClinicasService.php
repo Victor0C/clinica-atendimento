@@ -6,15 +6,16 @@ use App\DTOs\Clinicas\ClinicaDTO;
 use App\DTOs\Clinicas\SearchGetAllClinicasDTO;
 use App\Interfaces\Clinicas\GetAllClinicasServiceInterface;
 
-use App\Models\Clinicas;
+use App\Models\Clinica;
+use Illuminate\Database\Eloquent\Collection;
 
 class GetAllClinicasService implements GetAllClinicasServiceInterface
 {
 
 
-  public function fire(int $page, int $perPage = 20, ?SearchGetAllClinicasDTO $searchDTO = null): array
+  public function fire(int $page, int $perPage = 20, ?SearchGetAllClinicasDTO $searchDTO = null): Collection
   {
-    $query = Clinicas::with(['enderecos'])
+    $query = Clinica::with(['enderecos'])
       ->forPage($page, $perPage);
 
     if ($searchDTO) {
@@ -31,8 +32,6 @@ class GetAllClinicasService implements GetAllClinicasServiceInterface
       }
     }
 
-    return $query->get()->map(function ($paciente) {
-      return new ClinicaDTO($paciente->toArray());
-    })->toArray();
+    return $query->get();
   }
 }

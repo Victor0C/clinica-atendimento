@@ -83,7 +83,7 @@ const deletar = () => {
           </TabsTrigger>
         </TabsList>
         <TabsContent v-for="(tab, index) in tabList" :key="index" :value="tab.value" class="p-0">
-          <component :is="tab.component" :paciente="props.paciente" :endereco="props.paciente.enderecos"/>
+          <component :is="tab.component" :paciente="props.paciente" :enderecos="props.paciente.enderecos"/>
         </TabsContent>
       </Tabs>
 

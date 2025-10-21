@@ -21,17 +21,15 @@ class ClinicaDTO
 
   public function __construct(array $data)
   {
-    $this->id = $data['id'];
-    $this->nome_fantasia = $data['nome_fantasia'];
-    $this->razao_social = $data['razao_social'];
-    $this->cnpj = $data['cnpj'];
-    $this->telefone_fixo = $data['telefone_fixo'] ?? null;
-    $this->celular = $data['celular'];
-    $this->email = $data['email'];
-
-    if (isset($data['enderecos'])) {
-      foreach ($data['enderecos'] as $endereco) {
-        $this->enderecos[] = new EnderecoDTO($endereco);
+    foreach ($data as $key => $value) {
+      if (property_exists($this, $key)) {
+        if ($key == 'enderecos') {
+          foreach ($data['enderecos'] as $endereco) {
+            $this->enderecos[] = new EnderecoDTO($endereco);
+          }
+        } else {
+          $this->$key = $value;
+        }
       }
     }
   }

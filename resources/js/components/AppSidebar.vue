@@ -5,7 +5,7 @@ import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { HousePlus, LayoutGrid, Users } from 'lucide-vue-next';
+import { HousePlus, LayoutGrid, Microscope, Users } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -15,7 +15,7 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Clinicas',
+        title: 'Clinica',
         href: '/clinicas',
         icon: HousePlus,
     },
@@ -23,6 +23,11 @@ const mainNavItems: NavItem[] = [
         title: 'Pacientes',
         href: '/pacientes',
         icon: Users,
+    },
+    {
+        title: 'Procedimentos',
+        href: '/procedimentos',
+        icon: Microscope,
     },
 ];
 

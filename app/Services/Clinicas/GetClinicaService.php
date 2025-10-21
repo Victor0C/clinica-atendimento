@@ -2,24 +2,23 @@
 
 namespace App\Services\Clinicas;
 
-use App\DTOs\Clinicas\ClinicaDTO;
 use App\Exceptions\Clinicas\NotFoundClinicaException;
 use App\Interfaces\Clinicas\GetClinicaServiceInterface;
-use App\Models\Clinicas;
+use App\Models\Clinica;
 
 class GetClinicaService implements GetClinicaServiceInterface
 {
 
 
-  public function fire(int $id): ClinicaDTO
+  public function fire(int $id): Clinica
   {
 
-    $clinica = Clinicas::with(['enderecos'])->find($id);
+    $clinica = Clinica::with(['enderecos', 'procedimentos.especialidade'])->find($id);
 
     if (!$clinica) {
       throw new NotFoundClinicaException();
     }
 
-    return new ClinicaDTO($clinica->toArray());
+    return $clinica;
   }
 }

@@ -12,9 +12,9 @@ class CreateClinicaRequest extends FormRequest
         return [
             'nome_fantasia' => 'required|string',
             'razao_social' => 'required|string',
-            'cnpj' => 'required|string|size:18',
-            'telefone_fixo' => 'nullable|string|max:15',
-            'celular' => 'required|string|max:15',
+            'cnpj' => 'required|string|size:14',
+            'telefone_fixo' => 'sometimes|nullable|string|max:10',
+            'celular' => 'sometimes|string|max:11',
             'email' => 'required|email|max:255',
 
             'enderecos' => 'required|array',
@@ -25,7 +25,7 @@ class CreateClinicaRequest extends FormRequest
             'enderecos.*.bairro' => 'required|string|max:255',
             'enderecos.*.cidade' => 'required|string|max:255',
             'enderecos.*.estado' => 'required|string|size:2',
-            'enderecos.*.cep' => 'required|string|size:9'
+            'enderecos.*.cep' => 'sometimes|string|size:8'
         ];
     }
 }

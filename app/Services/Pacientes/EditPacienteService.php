@@ -2,7 +2,6 @@
 
 namespace App\Services\Pacientes;
 
-use App\Interfaces\EditPacienteServiceInterface;
 use App\DTOs\Pacientes\PacienteDTO;
 use App\Exceptions\Pacientes\CpfPacienteAlreadyUsedException;
 use App\Exceptions\Pacientes\EmailAlreadyExistsException;
@@ -10,6 +9,7 @@ use App\Exceptions\Pacientes\NotFoundPacienteException;
 use App\Exceptions\Pacientes\RgAlreadyExistsException;
 use App\Helpers\VerifyPacienteUniquesHelper;
 use App\Helpers\VerifyUniquesHelper;
+use App\Interfaces\Paciente\EditPacienteServiceInterface;
 use App\Interfaces\Paciente\PacienteServiceInterface;
 use App\Models\Paciente;
 
@@ -18,7 +18,7 @@ class EditPacienteService implements EditPacienteServiceInterface
   public function __construct(private PacienteServiceInterface $_PACIENTE_SERVICE) {}
 
 
-  public function fire(int $id, array $data): PacienteDTO
+  public function fire(int $id, array $data): Paciente
   {
     $paciente = Paciente::with('enderecos')->find($id);
 
@@ -51,6 +51,6 @@ class EditPacienteService implements EditPacienteServiceInterface
       }
     }
 
-    return PacienteDTO::fromModel($paciente);
+    return $paciente;
   }
 }

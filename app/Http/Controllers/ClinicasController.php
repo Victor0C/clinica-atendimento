@@ -6,8 +6,10 @@ use App\DTOs\Clinicas\CreateClinicaDTO;
 use App\DTOs\Clinicas\SearchGetAllClinicasDTO;
 use App\Enums\Pacientes\GetAllEnum;
 use App\Helpers\RequestHelper;
+use App\Http\Requests\AddProcedimentoRequest;
 use App\Http\Requests\CreateClinicaRequest;
 use App\Http\Requests\EditClinicaRequest;
+use App\Http\Resources\ClinicaResource;
 use App\Interfaces\Clinicas\ClinicasServiceInterface;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -27,10 +29,10 @@ class ClinicasController extends Controller
     $pageData = $clinicaService->getAll($page, $perPage, $searchDTO);
 
     if ($request->wantsJson()) {
-      return response()->json($pageData);
+      return response()->json(ClinicaResource::collection($pageData));
     }
 
-    return Inertia::render('Clinicas/Clinicas')->with(['page' => $pageData]);
+    return Inertia::render('Clinicas/Clinicas')->with(['page' => ClinicaResource::collection($pageData)]);
   }
 
   public function getViewCreateClinica()
@@ -41,7 +43,7 @@ class ClinicasController extends Controller
   public function getViewEditarClinica($id, ClinicasServiceInterface $service)
   {
     try {
-      return Inertia::render('Clinicas/CriarEditarClinica')->with(['clinica' => $service->get($id)]);
+      return Inertia::render('Clinicas/CriarEditarClinica')->with(['clinica' => new ClinicaResource($service->get($id))]);
     } catch (\Throwable $e) {
       return RequestHelper::onError($e);
     }
@@ -50,7 +52,7 @@ class ClinicasController extends Controller
   public function editClinica(EditClinicaRequest $request, $id, ClinicasServiceInterface $service)
   {
     try {
-      return response()->json($service->edit($id, $request->validated()), 200);
+      return response()->json(new ClinicaResource($service->edit($id, $request->validated())), 200);
     } catch (\Throwable $e) {
       return RequestHelper::onError($e);
     }
@@ -59,7 +61,7 @@ class ClinicasController extends Controller
   public function getViewDetalhesClinicas($id, ClinicasServiceInterface $service)
   {
     try {
-      return Inertia::render('Clinicas/DetalhesClinica/DetalhesClinica')->with(['clinica' => $service->get($id)]);
+      return Inertia::render('Clinicas/DetalhesClinica/DetalhesClinica')->with(['clinica' => new ClinicaResource($service->get($id))]);
     } catch (\Throwable $e) {
       return RequestHelper::onError($e);
     }
@@ -68,7 +70,7 @@ class ClinicasController extends Controller
   public function createClinicas(CreateClinicaRequest $request, ClinicasServiceInterface $service)
   {
     try {
-      return response()->json($service->create(new CreateClinicaDTO($request->validated())), 201);
+      return response()->json(new ClinicaResource($service->create(new CreateClinicaDTO($request->validated()))), 201);
     } catch (\Throwable $e) {
       return RequestHelper::onError($e);
     }
@@ -84,5 +86,22 @@ class ClinicasController extends Controller
     }
   }
 
+  public function addProcedimentos(AddProcedimentoRequest $request, $clinica_id, $procedimento_id, ClinicasServiceInterface $service)
+  {
+    try {
+      return response()->json(new ClinicaResource($service->addProcedimento($clinica_id, $procedimento_id, $request->validated()['preco'])), 201);
+    } catch (\Throwable $e) {
+      return RequestHelper::onError($e);
+    }
+  }
 
+  public function removeProcedimentos($clinica_id, $procedimento_id, ClinicasServiceInterface $service)
+  {
+    try {
+      $service->removeProcedimento($clinica_id, $procedimento_id);
+      return response()->noContent();
+    } catch (\Throwable $e) {
+      return RequestHelper::onError($e);
+    }
+  }
 }

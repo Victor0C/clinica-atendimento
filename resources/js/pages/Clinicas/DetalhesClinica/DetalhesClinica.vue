@@ -11,9 +11,12 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import DadosEndereco from '@/pages/Pacientes/DetalhesPaciente/TabsContents/DadosEndereco.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Inertia } from '@inertiajs/inertia';
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import AddProcedimentoDrawer from './Partials/AddProcedimentoDrawer.vue';
 import DadosClinica from './TabsContents/DadosClinica.vue';
+import ProcedimentosClinica from './TabsContents/ProcedimentosClinica.vue';
+import { ProcedimentoInterface } from '@/Interfaces/Procedimentos/ProcedimentoInterface';
 
 
 
@@ -27,6 +30,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
+
 const tabList = [
   {
     name: 'Dados da Clinica',
@@ -38,11 +42,20 @@ const tabList = [
     value: 'endereco',
     component: DadosEndereco,
   },
+  {
+    name: 'Procedimentos',
+    value: 'procedimentos',
+    component: ProcedimentosClinica,
+  },
 ]
 
+const page = usePage();
+const searchParams = new URLSearchParams(page.url.split('?')[1] || '');
+const currentTab = ref(searchParams.get('tab') || tabList[0].value);
 const loading = ref(false);
 const progress = ref(0);
-
+const addProcedimento = ref<boolean>(false);
+const clinica = ref<ClinicaInterface>(props.clinica)
 
 const deletar = () => {
   loading.value = true
@@ -67,24 +80,47 @@ const deletar = () => {
     });
 };
 
+const onChangeTab = (newTab: string) => {
+  currentTab.value = newTab;
+
+  const url = `${window.location.pathname}?tab=${newTab}`;
+  window.history.replaceState({}, '', url);
+};
+
+const openAddProcedimento = (state: boolean) => {
+  addProcedimento.value = state
+}
+
+const handleUpdateOpen = (value: boolean) => {
+  addProcedimento.value = value;
+};
+
+const updateProcedimentos = (procedimentos: ProcedimentoInterface[]) => {
+  clinica.value.procedimentos = procedimentos;
+}
 </script>
 
 <template>
 
-  <Head :title="props.clinica.nome_fantasia" />
+  <Head :title="clinica.nome_fantasia" />
 
   <AppLayout :breadcrumbs="breadcrumbs">
+    <AddProcedimentoDrawer :clinicaId="clinica.id" :open="addProcedimento" @update:open="handleUpdateOpen"
+      @update:procedimento="updateProcedimentos">
+    </AddProcedimentoDrawer>
     <div class="flex h-full flex-1 flex-col gap-4 p-4 overflow-x-auto">
       <BarLoading v-if="loading" :progress="progress"></BarLoading>
-      <Tabs :default-value="tabList[0].value">
+      <Tabs :default-value="currentTab" @update:value="onChangeTab">
         <TabsList class="bg-[var(--sidebar-primary-foreground)]">
-          <TabsTrigger class="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-            v-for="(tab, index) in tabList" :key="index" :value="tab.value">
+          <TabsTrigger v-for="(tab, index) in tabList" :key="index" :value="tab.value" @click="onChangeTab(tab.value)"
+            class="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             {{ tab.name }}
           </TabsTrigger>
         </TabsList>
+
         <TabsContent v-for="(tab, index) in tabList" :key="index" :value="tab.value" class="p-0">
-          <component :is="tab.component" :clinica="props.clinica" :enderecos="props.clinica.enderecos"/>
+          <component :is="tab.component" :clinica="clinica" :enderecos="clinica.enderecos"
+            :procedimentos="clinica.procedimentos" :clinica_id="clinica.id"/>
         </TabsContent>
       </Tabs>
 
@@ -93,8 +129,12 @@ const deletar = () => {
           :onConfirm="deletar">
           <Button variant="destructive">Deletar</Button>
         </ConfirmAction>
-        <Button variant="outline"
-          @click="() => { Inertia.visit(`/clinicas/editar/${props.clinica.id}`) }">Editar</Button>
+
+
+        <Button v-if="currentTab == 'procedimentos'" variant="default"
+          @click="openAddProcedimento(true)">Adicionar</Button>
+        <Button v-else variant="outline"
+          @click="() => { Inertia.visit(`/clinicas/editar/${clinica.id}`) }">Editar</Button>
       </div>
     </div>
   </AppLayout>

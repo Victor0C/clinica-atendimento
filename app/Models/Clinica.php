@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Clinicas extends Model
+class Clinica extends Model
 {
     protected $table = 'clinicas';
 
@@ -23,4 +23,10 @@ class Clinicas extends Model
         return $this->belongsToMany(Endereco::class, 'endereco_clinica', 'clinica_id', 'endereco_id')->withTimestamps();
     }
 
+    public function procedimentos(): BelongsToMany
+    {
+        return $this->belongsToMany(Procedimento::class, 'procedimento_clinica', 'clinica_id', 'procedimento_id')
+            ->withPivot('preco')
+            ->withTimestamps();
+    }
 }

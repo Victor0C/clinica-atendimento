@@ -9,22 +9,22 @@ use App\Exceptions\Clinicas\NotFoundClinicaException;
 use App\Exceptions\Clinicas\RazaoSocialClinicaAlreadyUsedException;
 use App\Exceptions\Pacientes\EmailAlreadyExistsException;
 use App\Helpers\VerifyUniquesHelper;
-use App\Models\Clinicas;
+use App\Models\Clinica;
 
 class EditClinicaService implements EditClinicaServiceInterface
 {
 
 
-  public function fire(int $id, array $data): ClinicaDTO
+  public function fire(int $id, array $data): Clinica
   {
-    $clinica = Clinicas::with('enderecos')->find($id);
+    $clinica = Clinica::with('enderecos')->find($id);
 
     if (!$clinica) {
       throw new NotFoundClinicaException();
     }
 
     VerifyUniquesHelper::verifyUniquesForEdit(
-      Clinicas::class,
+      Clinica::class,
       $id,
       $data,
       ['cnpj', 'razao_social', 'email'],
@@ -48,6 +48,6 @@ class EditClinicaService implements EditClinicaServiceInterface
       }
     }
 
-    return ClinicaDTO::fromModel($clinica);
+    return $clinica;
   }
 }
