@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\Especialidades\SearchGetAllEspecialidadesDTO;
 use App\Helpers\RequestHelper;
+use App\Http\Requests\CreateEspecialidadeRequest;
+use App\Http\Requests\UpdateEspecialidadeRequest;
 use App\Http\Resources\EspecialidadeResource;
 use App\Interfaces\Especialidades\EspecialidadeServiceInterface;
 use Illuminate\Http\Request;
@@ -14,45 +17,49 @@ class EspecialidadeController extends Controller
     {
         try {
             $service = app()->make(EspecialidadeServiceInterface::class);
-            $especialidades = $service->getAll();
+            $especialidades = $service->getAll(new SearchGetAllEspecialidadesDTO(
+                nome: $request->query('search')
+            ));
 
             if ($request->wantsJson()) {
                 return response()->json(EspecialidadeResource::collection($especialidades), 200);
             }
 
-            return abort(404);
+            return Inertia::render('Especialidades/Especialidades', [
+                'page' => EspecialidadeResource::collection($especialidades)
+            ]);
         } catch (\Throwable $e) {
             return RequestHelper::onError($e);
         }
     }
 
-    public function create()
+    public function store(CreateEspecialidadeRequest $request, EspecialidadeServiceInterface $service)
     {
-        return abort(404);
+        try {
+            $especialidade = $service->create($request->validated());
+            return response()->json(new EspecialidadeResource($especialidade), 201);
+        } catch (\Throwable $e) {
+            return RequestHelper::onError($e);
+        }
     }
 
-    public function store(Request $request)
+    public function update(UpdateEspecialidadeRequest $request, $id, EspecialidadeServiceInterface $service)
     {
-        return abort(404);
+        try {
+            $especialidade = $service->update($id, $request->validated());
+            return response()->json(new EspecialidadeResource($especialidade), 200);
+        } catch (\Throwable $e) {
+            return RequestHelper::onError($e);
+        }
     }
 
-    public function show($id)
+    public function destroy($id, EspecialidadeServiceInterface $service)
     {
-        return abort(404);
-    }
-
-    public function edit($id)
-    {
-        return abort(404);
-    }
-
-    public function update(Request $request, $id)
-    {
-        return abort(404);
-    }
-
-    public function destroy($id)
-    {
-        return abort(404);
+        try {
+            $service->delete($id);
+            return response()->noContent();
+        } catch (\Throwable $e) {
+            return RequestHelper::onError($e);
+        }
     }
 }
