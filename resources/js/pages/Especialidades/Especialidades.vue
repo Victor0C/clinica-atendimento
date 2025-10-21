@@ -31,6 +31,7 @@ import { ProcedimentoInterface } from '@/Interfaces/Procedimentos/ProcedimentoIn
 import { deleteEspecialidade, getAllEspecialidades } from '@/Services/EspecialidadeService';
 import { wait } from '@/Utils';
 import { Pencil, Plus, Search, Trash2 } from 'lucide-vue-next';
+import CriarEditarEspecialidadeDrawer from './Partials/CriarEditarEspecialidadeDrawer.vue';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -161,23 +162,22 @@ const openCriarEditar = (state: boolean) => {
   criaEditarEspecialidade.value = state
 }
 
-// const handleUpdateOpen = (value: boolean) => {
-//   criaEditarEspecialidade.value = value;
-// };
+const handleUpdateOpen = (value: boolean) => {
+  criaEditarEspecialidade.value = value;
+};
 
-// const updateProcedimentos = (procedimento: Omit<ProcedimentoInterface, 'preco'>) => {
-//   console.log(procedimento);
-//   const index = localPage.value.findIndex(p => p.id === procedimento.id);
-//   if (index !== -1) {
-//     localPage.value = [
-//       ...localPage.value.slice(0, index),
-//       procedimento,
-//       ...localPage.value.slice(index + 1)
-//     ];
-//   } else {
-//     localPage.value = [procedimento, ...localPage.value];
-//   }
-// }
+const updateEspecialidades = (especialidade: EspecialidadeInterface) => {
+  const index = localPage.value.findIndex(p => p.id === especialidade.id);
+  if (index !== -1) {
+    localPage.value = [
+      ...localPage.value.slice(0, index),
+      especialidade,
+      ...localPage.value.slice(index + 1)
+    ];
+  } else {
+    localPage.value = [especialidade, ...localPage.value];
+  }
+}
 
 
 </script>
@@ -187,16 +187,16 @@ const openCriarEditar = (state: boolean) => {
   <Head title="Especialidades" />
 
   <AppLayout :breadcrumbs="breadcrumbs">
-    <!-- <CriarEditarProcedimentoDrawer :open="criaEditarEspecialidade" @update:open="handleUpdateOpen"
-      @update:procedimento="updateProcedimentos" :procedimento="targetEspecialidade" /> -->
+    <CriarEditarEspecialidadeDrawer :open="criaEditarEspecialidade" @update:open="handleUpdateOpen"
+      @update:especialidade="updateEspecialidades" :especialidade="targetEspecialidade" />
 
     <div class="flex h-full flex-1 flex-col gap-4 p-4 overflow-x-auto">
       <BarLoading v-if="loading" :progress="progress"></BarLoading>
       <div class="flex flex-col sm:flex-row w-full gap-2">
         <div class="flex gap-2 w-full">
 
-          <SearchInput v-model="searchValue" id="1" placeholder="Pesquise pelo nome da especialidade" :disabled="loading"
-            @enter="search" />
+          <SearchInput v-model="searchValue" id="1" placeholder="Pesquise pelo nome da especialidade"
+            :disabled="loading" @enter="search" />
           <Button @click="search" :disabled="loading">
             <Search />
           </Button>

@@ -14,6 +14,19 @@ async function getAllEspecialidades(search=''):  Promise<EspecialidadeInterface[
         throw new Error(message);
     }
 }
+
+async function createEspecialidade(
+    payload: Omit<EspecialidadeInterface, 'id'>
+): Promise<EspecialidadeInterface> {
+    try {
+        const response = await api.post('especialidades', payload);
+        return response.data;
+    } catch (error: any) {
+        const message = error.response?.data?.message || 'Erro ao criar especialidade. Tente novamente.';
+        throw new Error(message);
+    }
+}
+
 async function updateEspecialidade(
     id: number,
     payload: Partial<EspecialidadeInterface>
@@ -35,4 +48,4 @@ async function deleteEspecialidade(id: number): Promise<void> {
         throw new Error(message);
     }
 }
-export { getAllEspecialidades, updateEspecialidade, deleteEspecialidade };
+export { getAllEspecialidades, updateEspecialidade, deleteEspecialidade, createEspecialidade };

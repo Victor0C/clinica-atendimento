@@ -10,7 +10,7 @@ class CreateEspecialidadeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'noeme' => 'required|string|max:255',
+            'nome' => 'required|string|max:255',
         ];
     }
 }
