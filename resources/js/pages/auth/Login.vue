@@ -17,7 +17,7 @@ defineProps<{
 <template>
     <AuthBase title="Sistema de Atendimento Clínico" description="Exames disponíveis onde e quando você precisar">
 
-        <Head title="Log in" />
+        <Head title="Entrar" />
 
         <div v-if="status" class="mb-4 text-sm font-medium text-center text-green-600">
             {{ status }}
