@@ -16,4 +16,6 @@ interface PacienteServiceInterface
     public function edit(int $id, array $data): Paciente;
     public function delete(int $id): void;
     public function encaminhar(int $paciente_id, int $clinica_id, int $procedimento_id): void;
+    public function encaminhamentos(int $paciente_id): Collection;
+    public function cancelarEncaminhamento(int $encaminhamento_id): void;
 }

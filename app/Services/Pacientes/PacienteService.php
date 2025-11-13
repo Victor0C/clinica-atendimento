@@ -68,4 +68,16 @@ class PacienteService implements PacienteServiceInterface
       'procedimento_id' => $procedimento_id,
     ]);
   }
+
+  public function encaminhamentos(int $paciente_id): Collection
+  {
+    return Encaminhamentos::with('paciente', 'clinicaDestino', 'procedimento')
+      ->where('paciente_id', $paciente_id)
+      ->get();
+  }
+
+  public function cancelarEncaminhamento(int $encaminhamento_id): void
+  {
+    Encaminhamentos::where('id', $encaminhamento_id)->delete();
+  }
 }

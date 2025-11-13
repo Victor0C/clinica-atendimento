@@ -1,4 +1,5 @@
 import { EnderecoInterface } from "../EnderecoInterface";
+import { EncaminhamentoInterface } from "./EncaminhamentoInterface";
 
 export interface PacienteInterface {
     id: number;
@@ -16,4 +17,5 @@ export interface PacienteInterface {
     status: 'ativo' | 'inativo';
 
     enderecos: EnderecoInterface[];
+    encaminhamentos: EncaminhamentoInterface[];
 }

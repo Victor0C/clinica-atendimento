@@ -32,4 +32,9 @@ class Paciente extends Model
     {
         return $this->belongsToMany(Endereco::class, 'endereco_paciente', 'paciente_id', 'endereco_id')->withTimestamps();
     }
+
+    public function encaminhamentos(): HasMany
+    {
+        return $this->hasMany(Encaminhamentos::class, 'paciente_id', 'id');
+    }
 }

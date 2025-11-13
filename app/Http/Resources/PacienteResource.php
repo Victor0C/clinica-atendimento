@@ -30,6 +30,7 @@ class PacienteResource extends JsonResource
             'observacoes' => $this->observacoes,
             'status' => $this->status,
             'enderecos' => EnderecoResource::collection($this->whenLoaded('enderecos')),
+            'encaminhamentos' => EncaminhamentoResource::collection($this->whenLoaded('encaminhamentos')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

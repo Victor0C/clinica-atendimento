@@ -56,4 +56,13 @@ async function encaminhar(paciente_id: number, clinica_id: number, procedimento_
     }
 }
 
-export { createPaciente, deletePaciente, editarPaciente, getAllPacientes, encaminhar };
+async function cancelarEncaminhamento(encaminhamento_id: number): Promise<void> {
+    try {
+        await api.delete(`/pacientes/encaminhamentos/${encaminhamento_id}`);
+    } catch (error: any) {
+        const message = error.response?.data?.message || 'Erro ao cancelar encaminhamento. Tente novamente.';
+        throw new Error(message);
+    }
+}
+
+export { createPaciente, deletePaciente, editarPaciente, getAllPacientes, encaminhar, cancelarEncaminhamento };

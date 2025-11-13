@@ -10,6 +10,7 @@ use App\Http\Requests\CreatePacienteRequest;
 use App\Http\Requests\EncaminharPacienteRequest;
 use App\Http\Requests\EditPacienteRequest;
 use App\Http\Resources\ClinicaResource;
+use App\Http\Resources\EncaminhamentoResource;
 use App\Http\Resources\PacienteResource;
 use App\Interfaces\Clinicas\ClinicasServiceInterface;
 use App\Interfaces\Paciente\PacienteServiceInterface;
@@ -111,6 +112,16 @@ class PacientesController extends Controller
         try {
             $data = $request->validated();
             $pacienteService->encaminhar($id, $data['clinica_id'], $data['procedimento_id']);
+            return response()->noContent();
+        } catch (\Throwable $e) {
+            return RequestHelper::onError($e);
+        }
+    }
+
+    public function cancelarEncaminhamento($id, PacienteServiceInterface $pacienteService)
+    {
+        try {
+            $pacienteService->cancelarEncaminhamento($id);
             return response()->noContent();
         } catch (\Throwable $e) {
             return RequestHelper::onError($e);
