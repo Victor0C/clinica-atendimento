@@ -83,17 +83,20 @@ const deletar = () => {
           </TabsTrigger>
         </TabsList>
         <TabsContent v-for="(tab, index) in tabList" :key="index" :value="tab.value" class="p-0">
-          <component :is="tab.component" :paciente="props.paciente" :enderecos="props.paciente.enderecos"/>
+          <component :is="tab.component" :paciente="props.paciente" :enderecos="props.paciente.enderecos" />
         </TabsContent>
       </Tabs>
 
-      <div class="flex justify-between mt-auto">
+      <div class="flex justify-between mt-auto gap-2">
         <ConfirmAction title="Deseja realmente deletar esse paciente?" description="Essa ação não pode ser desfeita."
           :onConfirm="deletar">
           <Button variant="destructive">Deletar</Button>
         </ConfirmAction>
-        <Button variant="outline"
-          @click="() => { Inertia.visit(`/pacientes/editar/${props.paciente.id}`) }">Editar</Button>
+        <div class="flex gap-2">
+          <Button variant="outline"
+            @click="() => { Inertia.visit(`/pacientes/editar/${props.paciente.id}`) }">Editar</Button>
+          <Button @click="() => { Inertia.visit(`/pacientes/${props.paciente.id}/encaminhar`) }">Encaminhar</Button>
+        </div>
       </div>
     </div>
   </AppLayout>

@@ -15,4 +15,5 @@ interface PacienteServiceInterface
     public function create(CreatePacienteDTO $dto): Paciente;
     public function edit(int $id, array $data): Paciente;
     public function delete(int $id): void;
+    public function encaminhar(int $paciente_id, int $clinica_id, int $procedimento_id): void;
 }

@@ -46,4 +46,14 @@ async function deletePaciente(id: number): Promise<void> {
     }
 }
 
-export { createPaciente, deletePaciente, editarPaciente, getAllPacientes };
+async function encaminhar(paciente_id: number, clinica_id: number, procedimento_id: number): Promise<void> {
+    try {
+        const response = await api.post(`/pacientes/${paciente_id}/encaminhar`, { clinica_id, procedimento_id });
+        return response.data;
+    } catch (error: any) {
+        const message = error.response?.data?.message || 'Erro ao encaminhar paciente. Tente novamente.';
+        throw new Error(message);
+    }
+}
+
+export { createPaciente, deletePaciente, editarPaciente, getAllPacientes, encaminhar };
