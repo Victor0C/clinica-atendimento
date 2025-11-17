@@ -11,15 +11,10 @@ Route::get('/', function () {
     return redirect('/pacientes');
 })->name('home');
 
-Route::get('dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-
 Route::middleware(['auth'])->group(function () {
     Route::prefix('pacientes')->group(
         function () {
-            Route::get('/', [PacientesController::class, 'getViewPacientes']);
+            Route::get('/', [PacientesController::class, 'getViewPacientes'])->name('pacientes');
             Route::post('/', [PacientesController::class, 'createPacientes']);
             Route::get('/novo', [PacientesController::class, 'getViewCreatePacientes']);
             Route::get('/editar/{id}', [PacientesController::class, 'getViewEditarPaciente']);

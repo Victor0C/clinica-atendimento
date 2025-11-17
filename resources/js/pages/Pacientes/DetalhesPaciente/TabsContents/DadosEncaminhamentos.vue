@@ -81,7 +81,7 @@ const allColumns: ColumnDef<EncaminhamentoInterface>[] = [
     cell: ({ row }) =>
       h(
         'div',
-        { class: 'flex items-center gap-2' },
+        { class: 'flex items-center gap-3' },
         [
           h(
             ConfirmAction,
@@ -131,20 +131,29 @@ const columns = computed(() => {
       {
         ...removerCol,
         cell: ({ row }: { row: Row<EncaminhamentoInterface> }) => h(
-          ConfirmAction,
-          {
-            title: 'Cancelar esse encaminhamento?',
-            description: 'Essa ação não pode ser desfeita.',
-            onConfirm: () => handleDelete(row.original.id),
-          },
-          {
-            default: () => h(CircleOff, {
-              class: `text-red-500 ${loading.value ? 'opacity-50' : 'cursor-pointer'}`,
+          'div',
+          { class: 'flex items-center gap-3' },
+          [
+            h(
+              ConfirmAction,
+              {
+                title: 'Cancelar esse encaminhamento?',
+                description: 'Essa ação não pode ser desfeita.',
+                onConfirm: () => handleDelete(row.original.id),
+              },
+              {
+                default: () => h(CircleOff, { class: "text-red-500 cursor-pointer", size: 20 })
+              }
+            ),
+            h(FileDown, {
+              title: 'Emitir guia',
+              class: "text-green-500 cursor-pointer",
               size: 20,
-              'aria-disabled': loading.value
+              onClick: () => window.open(`/pacientes/encaminhamentos/${row.original.id}/pdf`, '_blank'),
             })
-          }
-        )
+
+          ]
+        ),
       },
     ];
   }
