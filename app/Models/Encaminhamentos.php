@@ -17,25 +17,18 @@ class Encaminhamentos extends Model
         'procedimento_id',
     ];
 
-    /**
-     * Relação com a clínica de destino.
-     */
+
     public function clinicaDestino()
     {
         return $this->belongsTo(Clinica::class, 'clinica_id_destino');
     }
 
-    /**
-     * Relação com o paciente.
-     */
+
     public function paciente()
     {
         return $this->belongsTo(Paciente::class, 'paciente_id');
     }
 
-    /**
-     * Relação com o procedimento da clínica.
-     */
     public function procedimento()
     {
         return $this->belongsTo(Procedimento::class, 'procedimento_id');

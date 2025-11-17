@@ -15,7 +15,7 @@ defineProps<{
 </script>
 
 <template>
-    <AuthBase title="Sistema de Atendimento Clínico" description="Exames disponíveis onde e quando você precisar">
+    <AuthBase title="Sistema de encaminhamento clínico" description="Exames disponíveis onde e quando você precisar">
 
         <Head title="Entrar" />
 

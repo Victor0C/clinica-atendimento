@@ -14,6 +14,8 @@ use App\Http\Resources\EncaminhamentoResource;
 use App\Http\Resources\PacienteResource;
 use App\Interfaces\Clinicas\ClinicasServiceInterface;
 use App\Interfaces\Paciente\PacienteServiceInterface;
+use App\Models\Encaminhamentos;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Inertia\Inertia;;
 
@@ -123,6 +125,17 @@ class PacientesController extends Controller
         try {
             $pacienteService->cancelarEncaminhamento($id);
             return response()->noContent();
+        } catch (\Throwable $e) {
+            return RequestHelper::onError($e);
+        }
+    }
+
+    public function encaminhamentosPdf($encaminhamento_id)
+    {
+        try {
+            $encaminhamento = Encaminhamentos::with(['clinicaDestino.enderecos', 'paciente.enderecos', 'procedimento'])->find($encaminhamento_id);
+            $pdf = Pdf::loadView("guia", ['encaminhamento' => $encaminhamento]);
+            return $pdf->stream('guia');
         } catch (\Throwable $e) {
             return RequestHelper::onError($e);
         }

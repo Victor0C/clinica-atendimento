@@ -13,7 +13,7 @@ import { useToasts } from '@/composables/useToasts';
 import { EncaminhamentoInterface } from '@/Interfaces/Pacientes/EncaminhamentoInterface';
 import { cancelarEncaminhamento } from '@/Services/PacienteService';
 import { ColumnDef, FlexRender, getCoreRowModel, Row, useVueTable } from '@tanstack/vue-table';
-import { CircleOff } from 'lucide-vue-next';
+import { CircleOff, FileDown } from 'lucide-vue-next';
 import { computed, h, ref, watch } from 'vue';
 
 
@@ -81,7 +81,7 @@ const allColumns: ColumnDef<EncaminhamentoInterface>[] = [
     cell: ({ row }) =>
       h(
         'div',
-        {},
+        { class: 'flex items-center gap-2' },
         [
           h(
             ConfirmAction,
@@ -93,7 +93,14 @@ const allColumns: ColumnDef<EncaminhamentoInterface>[] = [
             {
               default: () => h(CircleOff, { class: "text-red-500 cursor-pointer", size: 20 })
             }
-          )
+          ),
+          h(FileDown, {
+            title: 'Emitir guia',
+            class: "text-green-500 cursor-pointer",
+            size: 20,
+            onClick: () => window.open(`/pacientes/encaminhamentos/${row.original.id}/pdf`, '_blank'),
+          })
+
         ]
       ),
   },
