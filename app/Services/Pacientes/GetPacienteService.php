@@ -10,14 +10,14 @@ use App\Models\Paciente;
 class GetPacienteService implements GetPacienteServiceInterface
 {
 
-  public function fire(int $id): PacienteDTO
+  public function fire(int $id): Paciente
   {
-    $paciente = Paciente::with(['enderecos'])->find($id);
+    $paciente = Paciente::with(['enderecos', 'encaminhamentos.clinicaDestino', 'encaminhamentos.procedimento'])->find($id);
 
     if (!$paciente) {
       throw new NotFoundPacienteException();
     }
 
-    return new PacienteDTO($paciente->toArray());
+    return $paciente;
   }
 }

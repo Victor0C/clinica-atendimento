@@ -11,11 +11,11 @@ class EditPacienteRequest extends FormRequest
     return [
       'nome' => 'sometimes|string|max:255',
       'data_nascimento' => 'sometimes|date',
-      'cpf' => 'sometimes|string|size:14',
+      'cpf' => 'sometimes|string|size:11',
       'rg' => 'sometimes|string|max:20',
       'sexo' => 'sometimes|in:M,F,O',
-      'telefone_fixo' => 'sometimes|nullable|string|max:15',
-      'celular' => 'sometimes|string|max:15',
+      'telefone_fixo' => 'sometimes|nullable|string|max:10',
+      'celular' => 'sometimes|string|max:11',
       'email' => 'sometimes|email|max:255',
       'convenio' => 'sometimes|nullable|string|max:50',
       'numero_carteirinha' => 'sometimes|nullable|string|max:30',
@@ -31,7 +31,7 @@ class EditPacienteRequest extends FormRequest
       'enderecos.*.bairro' => 'sometimes|string|max:255',
       'enderecos.*.cidade' => 'sometimes|string|max:255',
       'enderecos.*.estado' => 'sometimes|string|size:2',
-      'enderecos.*.cep' => 'sometimes|string|size:9',
+      'enderecos.*.cep' => 'sometimes|string|size:8',
     ];
   }
 }

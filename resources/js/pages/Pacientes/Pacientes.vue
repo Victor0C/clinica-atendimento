@@ -29,7 +29,7 @@ import type { Row } from "@tanstack/vue-table";
 import { Eye, Plus, Search } from 'lucide-vue-next';
 import BarLoading from '@/components/Loading/BarLoading.vue';
 import { getAllPacientes } from '@/Services/PacienteService';
-import { SearchPacienteInterface } from '@/Interfaces/Pacientes/SearchPacienteInterfa';
+import { SearchPacienteInterface } from '@/Interfaces/Pacientes/SearchPacienteInterface';
 import { wait } from '@/Utils';
 import { useToasts } from '@/composables/useToasts';
 

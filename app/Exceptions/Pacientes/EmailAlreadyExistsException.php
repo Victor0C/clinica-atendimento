@@ -6,7 +6,7 @@ use Exception;
 
 class EmailAlreadyExistsException extends Exception
 {
-  protected $message = 'E-mail já cadastrado em outro paciente';
+  protected $message = 'E-mail já em uso';
   protected $code = 422;
 
   public function __construct($message = null, $code = null)

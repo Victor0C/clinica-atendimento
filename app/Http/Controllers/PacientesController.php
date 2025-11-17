@@ -7,8 +7,15 @@ use App\DTOs\Pacientes\SearchGetAllPacientesDTO;
 use App\Enums\Pacientes\GetAllEnum;
 use App\Helpers\RequestHelper;
 use App\Http\Requests\CreatePacienteRequest;
+use App\Http\Requests\EncaminharPacienteRequest;
 use App\Http\Requests\EditPacienteRequest;
+use App\Http\Resources\ClinicaResource;
+use App\Http\Resources\EncaminhamentoResource;
+use App\Http\Resources\PacienteResource;
+use App\Interfaces\Clinicas\ClinicasServiceInterface;
 use App\Interfaces\Paciente\PacienteServiceInterface;
+use App\Models\Encaminhamentos;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Inertia\Inertia;;
 
@@ -27,7 +34,7 @@ class PacientesController extends Controller
         $pageData = $pacienteService->getAll($page, $perPage, $searchDTO);
 
         if ($request->wantsJson()) {
-            return response()->json($pageData);
+            return response()->json(PacienteResource::collection($pageData));
         }
 
         return Inertia::render('Pacientes/Pacientes')->with(['page' => $pageData]);
@@ -50,7 +57,7 @@ class PacientesController extends Controller
     public function editPaciente(EditPacienteRequest $request, $id, PacienteServiceInterface $pacienteService)
     {
         try {
-            return response()->json($pacienteService->edit($id, $request->validated()), 200);
+            return response()->json(new PacienteResource($pacienteService->edit($id, $request->validated())), 200);
         } catch (\Throwable $e) {
             return RequestHelper::onError($e);
         }
@@ -59,7 +66,7 @@ class PacientesController extends Controller
     public function getViewDetalhesPacientes($id, PacienteServiceInterface $pacienteService)
     {
         try {
-            return Inertia::render('Pacientes/DetalhesPaciente/DetalhesPaciente')->with(['paciente' => $pacienteService->get($id)]);
+            return Inertia::render('Pacientes/DetalhesPaciente/DetalhesPaciente')->with(['paciente' => new PacienteResource($pacienteService->get($id))]);
         } catch (\Throwable $e) {
             return RequestHelper::onError($e);
         }
@@ -68,7 +75,10 @@ class PacientesController extends Controller
     public function createPacientes(CreatePacienteRequest $request, PacienteServiceInterface $pacienteService)
     {
         try {
-            return response()->json($pacienteService->create(new CreatePacienteDTO($request->validated())), 201);
+            return response()->json(
+                new PacienteResource($pacienteService->create(new CreatePacienteDTO($request->validated()))),
+                201
+            );
         } catch (\Throwable $e) {
             return RequestHelper::onError($e);
         }
@@ -79,6 +89,53 @@ class PacientesController extends Controller
         try {
             $pacienteService->delete($id);
             return response()->noContent();
+        } catch (\Throwable $e) {
+            return RequestHelper::onError($e);
+        }
+    }
+
+    public function encaminharPacienteView($id, PacienteServiceInterface $pacienteService, ClinicasServiceInterface $clinicasService)
+    {
+        try {
+            return Inertia::render('Pacientes/EncaminharPaciente')->with(
+                [
+                    'paciente' => new PacienteResource($pacienteService->get($id)),
+                    'clinicas' => ClinicaResource::collection($clinicasService->getAll(1, 100))
+                ]
+            );
+        } catch (\Throwable $e) {
+            return RequestHelper::onError($e);
+        }
+    }
+
+
+    public function encaminharPaciente(EncaminharPacienteRequest $request, $id, PacienteServiceInterface $pacienteService)
+    {
+        try {
+            $data = $request->validated();
+            $pacienteService->encaminhar($id, $data['clinica_id'], $data['procedimento_id']);
+            return response()->noContent();
+        } catch (\Throwable $e) {
+            return RequestHelper::onError($e);
+        }
+    }
+
+    public function cancelarEncaminhamento($id, PacienteServiceInterface $pacienteService)
+    {
+        try {
+            $pacienteService->cancelarEncaminhamento($id);
+            return response()->noContent();
+        } catch (\Throwable $e) {
+            return RequestHelper::onError($e);
+        }
+    }
+
+    public function encaminhamentosPdf($encaminhamento_id)
+    {
+        try {
+            $encaminhamento = Encaminhamentos::with(['clinicaDestino.enderecos', 'paciente.enderecos', 'procedimento'])->find($encaminhamento_id);
+            $pdf = Pdf::loadView("guia", ['encaminhamento' => $encaminhamento]);
+            return $pdf->stream('guia');
         } catch (\Throwable $e) {
             return RequestHelper::onError($e);
         }

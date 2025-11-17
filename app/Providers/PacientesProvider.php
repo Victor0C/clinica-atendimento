@@ -3,9 +3,9 @@
 namespace App\Providers;
 
 use App\Helpers\AppHelper;
-use App\Interfaces\EditPacienteServiceInterface;
 use App\Interfaces\Paciente\CreatePacienteServiceInterface;
 use App\Interfaces\Paciente\DeletePacienteServiceInterface;
+use App\Interfaces\Paciente\EditPacienteServiceInterface;
 use App\Interfaces\Paciente\GetAllPacienteServiceInterface;
 use App\Interfaces\Paciente\GetPacienteServiceInterface;
 use App\Interfaces\Paciente\PacienteServiceInterface;

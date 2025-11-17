@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { PacienteInterface } from '@/Interfaces/Pacientes/PacienteInterface';
+import { EnderecoInterface } from '@/Interfaces/EnderecoInterface';
 import TextInfo from '@/components/Info/TextInfo.vue';
 import { Card, CardContent } from '@/components/ui/card';
 
-const props = defineProps<{ paciente: PacienteInterface }>()
+const props = defineProps<{ enderecos: EnderecoInterface[] }>()
 
 
-const infos = props.paciente.enderecos.flatMap((endereco) => [
+const infos = props.enderecos.flatMap((endereco) => [
   { title: 'Cidade', value: endereco.cidade },
   { title: 'CEP', value: endereco.cep },
   { title: 'Estado', value: endereco.estado },
