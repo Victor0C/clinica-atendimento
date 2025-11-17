@@ -15,7 +15,7 @@ class GetAllClinicasService implements GetAllClinicasServiceInterface
 
   public function fire(int $page, int $perPage = 20, ?SearchGetAllClinicasDTO $searchDTO = null): Collection
   {
-    $query = Clinica::with(['enderecos'])
+    $query = Clinica::with(['enderecos', 'procedimentos.especialidade'])
       ->forPage($page, $perPage);
 
     if ($searchDTO) {

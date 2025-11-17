@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use App\DTOs\Clinicas\ClinicaWithProcedimentosDTO;
 use App\Interfaces\Clinicas\ClinicasServiceInterface;
 use App\Models\Clinica;
+use App\Models\Encaminhamentos;
+use App\Models\Paciente;
 use App\Services\Clinicas\ClinicasService;
 use Illuminate\Console\Command;
 
@@ -30,7 +32,7 @@ class victor extends Command
     public function handle()
     {
 
-        dd(ClinicaWithProcedimentosDTO::fromModel(Clinica::with(['enderecos', 'procedimentos.especialidade'])->find(1)));
+        dd(Paciente::with(['enderecos', 'encaminhamentos.clinicaDestino', 'encaminhamentos.procedimento'])->find(1));
 
         // $clinicaService = app()->make(ClinicasServiceInterface::class);
         // dd($clinicaService->addProcedimentos(1, 1, 5000));

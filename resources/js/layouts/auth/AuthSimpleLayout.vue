@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { ClipboardPlus } from 'lucide-vue-next';
 
 defineProps<{
     title?: string;
@@ -14,9 +13,8 @@ defineProps<{
             <div class="flex flex-col gap-8">
                 <div class="flex flex-col items-center gap-3">
                     <Link :href="route('home')" class="flex flex-col items-center gap-2 font-medium">
-                    <div
-                        class="flex h-9 w-9 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground p-1">
-                        <ClipboardPlus class="size-9  dark:text-white" />
+                    <div class="flex h-20 w-20 items-center justify-center rounded-md">
+                        <img src="/imgs/logo.jpeg" class=" dark:text-white rounded-md" />
                     </div>
                     <span class="sr-only">{{ title }}</span>
                     </Link>

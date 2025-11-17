@@ -26,6 +26,10 @@ Route::middleware(['auth'])->group(function () {
             Route::put('/editar/{id}', [PacientesController::class, 'editPaciente']);
             Route::get('/detalhes/{id}', [PacientesController::class, 'getViewDetalhesPacientes']);
             Route::delete('delete/{id}', [PacientesController::class, 'deletarPaciente']);
+            Route::get('{id}/encaminhar', [PacientesController::class, 'encaminharPacienteView']);  
+            Route::post('{id}/encaminhar', [PacientesController::class, 'encaminharPaciente']);
+            Route::get('/encaminhamentos/{encaminhamento_id}/pdf', [PacientesController::class, 'encaminhamentosPdf']);
+            Route::delete('/encaminhamentos/{encaminhamento_id}', [PacientesController::class, 'cancelarEncaminhamento']);
         }
     );
 
